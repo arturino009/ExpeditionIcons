@@ -3,4 +3,4 @@
 Plugin for PoeHelper.
 Displays good and bad remnants.
 
-![Image](https://imgur.com/a/CFdhb0Y)
+![Image](https://i.imgur.com/tukMlD8.jpg)
