@@ -156,6 +156,10 @@ namespace ExpeditionIcons
         {
             var camera = GameController.Game.IngameState.Camera;
             var mapWindow = GameController.Game.IngameState.IngameUi.Map;
+            if(GameController.Game.IngameState.UIRoot.Scale == 0)
+            {
+                DebugWindow.LogError("ExpeditionIcons: Seems like UIRoot.Scale is 0. Icons will not be drawn because of that.");
+            }
             var mapRect = mapWindow.GetClientRect();
             var playerPos = GameController.Player.GetComponent<Positioned>().GridPos;
             var posZ = GameController.Player.GetComponent<Render>().Z;
