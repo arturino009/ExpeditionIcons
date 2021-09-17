@@ -83,44 +83,46 @@ namespace ExpeditionIcons
                 var positionedComp = e.GetComponent<Positioned>();
                 var text = "";
                 var background = Color.Green;
-                string[] goodmods =
-                {
-                    "ExpeditionRelicModifierExpeditionCurrencyQuantityChest",
-                    "ExpeditionRelicModifierExpeditionCurrencyQuantityMonster",
-                    "ExpeditionRelicModifierItemQuantityChest",
-                    "ExpeditionRelicModifierItemQuantityMonster"
-                };
 
-                if (mods.Any(x => goodmods.Any(y => x.Contains(y))))
+                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionCurrencyQuantityChest")) ||
+                    mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionCurrencyQuantityMonster"))) && Settings.ShowArtifact.Value)
                 {
-                    text = "Good";
-                    background = Color.Green;
+                    text = "Art";
+                    background = Settings.ArtifactColor;
                 }
 
-                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionLogbookQuantityChest")) && Settings.ShowLogbooks.Value) ||
-                    (mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionLogbookQuantityMonster")) && Settings.ShowLogbooks.Value))
+                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierItemQuantityChest")) ||
+                    mods.Any(x => x.Contains("ExpeditionRelicModifierItemQuantityMonster"))) && Settings.ShowQuant.Value)
+                {
+                    text = "Quant";
+                    background = Settings.QuantColor;
+                }
+
+                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionLogbookQuantityChest")) ||
+                    mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionLogbookQuantityMonster"))) && Settings.ShowLogbooks.Value)
                 {
                     text = "Log";
-                    background = Color.Aqua;
+                    background = Settings.LogbookColor;
                 }
 
-                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionBasicCurrencyChest")) && Settings.ShowBasicCurrency.Value) ||
-                    (mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionBasicCurrencyElite")) && Settings.ShowBasicCurrency.Value))
+                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionBasicCurrencyChest")) ||
+                    mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionBasicCurrencyElite"))) && Settings.ShowBasicCurrency.Value)
                 {
                     text = "Curr";
-                    background = Color.Yellow;
+                    background = Settings.BasicColor;
                 }
 
-                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierStackedDeckChest")) && Settings.ShowStackedDecks.Value) ||
-                    (mods.Any(x => x.Contains("ExpeditionRelicModifierStackedDeckElite")) && Settings.ShowStackedDecks.Value))
+                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierStackedDeckChest")) ||
+                    mods.Any(x => x.Contains("ExpeditionRelicModifierStackedDeckElite"))) && Settings.ShowStackedDecks.Value)
                 {
                     text = "Deck";
-                    background = Color.Gray;
+                    background = Settings.StackedColor;
                 }
 
-                if (mods.Any(x => x.Contains("ExpeditionRelicModifierElitesDuplicated"))){
-                    text = "POG";
-                    background = Color.Violet;
+                if (mods.Any(x => x.Contains("ExpeditionRelicModifierElitesDuplicated")) && Settings.ShowDouble.Value)
+                {
+                    text = "POG*2";
+                    background = Settings.DoubleColor;
                 }
 
                 if ((mods.Any(x => x.Contains("ExpeditionRelicModifierImmunePhysicalDamage")) && Settings.PhysImmune.Value) ||
@@ -131,7 +133,7 @@ namespace ExpeditionIcons
                     (mods.Any(x => x.Contains("ExpeditionRelicModifierCannotBeCrit")) && Settings.CritImmune.Value))
                 {
                     text = "WARN";
-                    background = Color.Red;
+                    background = Settings.ImmuneColor;
                 }
                 
                 if (text == "") continue;
