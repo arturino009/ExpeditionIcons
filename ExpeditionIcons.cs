@@ -87,25 +87,40 @@ namespace ExpeditionIcons
                 {
                     "ExpeditionRelicModifierExpeditionCurrencyQuantityChest",
                     "ExpeditionRelicModifierExpeditionCurrencyQuantityMonster",
-                    "ExpeditionRelicModifierStackedDeckChest",
-                    "ExpeditionRelicModifierStackedDeckElite",
-                    "ExpeditionRelicModifierExpeditionBasicCurrencyChest",
-                    "ExpeditionRelicModifierExpeditionBasicCurrencyElite",
-                    "ExpeditionRelicModifierExpeditionLogbookQuantityChest",
-                    "ExpeditionRelicModifierExpeditionLogbookQuantityMonster",
                     "ExpeditionRelicModifierItemQuantityChest",
                     "ExpeditionRelicModifierItemQuantityMonster"
                 };
 
-                if (mods.Any(x => goodmods.Any(y=> x.Contains(y))))
+                if (mods.Any(x => goodmods.Any(y => x.Contains(y))))
                 {
                     text = "Good";
                     background = Color.Green;
                 }
 
+                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionLogbookQuantityChest")) && Settings.ShowLogbooks.Value) ||
+                    (mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionLogbookQuantityMonster")) && Settings.ShowLogbooks.Value))
+                {
+                    text = "Log";
+                    background = Color.Aqua;
+                }
+
+                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionBasicCurrencyChest")) && Settings.ShowBasicCurrency.Value) ||
+                    (mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionBasicCurrencyElite")) && Settings.ShowBasicCurrency.Value))
+                {
+                    text = "Curr";
+                    background = Color.Yellow;
+                }
+
+                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierStackedDeckChest")) && Settings.ShowStackedDecks.Value) ||
+                    (mods.Any(x => x.Contains("ExpeditionRelicModifierStackedDeckElite")) && Settings.ShowStackedDecks.Value))
+                {
+                    text = "Deck";
+                    background = Color.Gray;
+                }
+
                 if (mods.Any(x => x.Contains("ExpeditionRelicModifierElitesDuplicated"))){
                     text = "POG";
-                    background = Color.Gold;
+                    background = Color.Violet;
                 }
 
                 if ((mods.Any(x => x.Contains("ExpeditionRelicModifierImmunePhysicalDamage")) && Settings.PhysImmune.Value) ||
