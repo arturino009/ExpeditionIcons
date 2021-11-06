@@ -79,7 +79,7 @@ namespace ExpeditionIcons
                 var expeditionChestComponent = e?.GetComponent<ObjectMagicProperties>();
                 if (expeditionChestComponent == null) continue;
                 var mods = expeditionChestComponent.Mods;
-                if (mods.Count != 2) continue;
+                if (!mods.Any(x => x.Contains("ExpeditionRelicModifier"))) continue;
                 var positionedComp = e.GetComponent<Positioned>();
                 var text = "";
                 var background = Color.Green;
