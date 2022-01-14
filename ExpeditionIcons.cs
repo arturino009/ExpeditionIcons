@@ -84,22 +84,25 @@ namespace ExpeditionIcons
 					var positionedComp = e.GetComponent<Positioned>();
 					var animatedMetaData = e.GetComponent<Animated>().BaseAnimatedObjectEntity.Metadata;
 					//var text = "*";
-
-					var background = Color.Orange;
+					if (animatedMetaData.contains("elite"))
+					{
+						var background = Color.Orange;
 					//if (modelPath == null) continue;
 					//text = text && modelPath.Substring(0, modelPath.IndexOf("."));
 						
-					var TextInfo = new MinimapTextInfo
-					{
-						Text = animatedMetaData,
-						FontSize = 60,
-						FontColor = Color.Orange,
-						//FontBackgroundColor = background,
-						TextWrapLength = 50
-					};
-					var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
-					if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
-						DrawToLargeMiniMapText(ent, ent.TextureInfo);
+						var TextInfo = new MinimapTextInfo
+						{
+							Text = Text,
+							FontSize = 20,
+							FontColor = Color.Orange,
+							FontBackgroundColor = Color.Orange,
+							TextWrapLength = 50
+						};
+						var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
+						if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
+							DrawToLargeMiniMapText(ent, ent.TextureInfo);
+					}
+					
 					
 				}
 				
