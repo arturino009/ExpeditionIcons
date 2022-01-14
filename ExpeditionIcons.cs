@@ -84,7 +84,7 @@ namespace ExpeditionIcons
 					var positionedComp = e.GetComponent<Positioned>();
 					var animatedMetaData = e.GetComponent<Animated>().BaseAnimatedObjectEntity.Metadata;
 					//var text = "*";
-					if (animatedMetaData.contains("elite"))
+					if (animatedMetaData.Contains("elite"))
 					{
 						var background = Color.Orange;
 					//if (modelPath == null) continue;
