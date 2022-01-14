@@ -74,40 +74,40 @@ namespace ExpeditionIcons
         {
 			
 			//GetComponent
-			foreach (var e in GameController.EntityListWrapper.OnlyValidEntities)
-            //foreach (var e in GameController.EntityListWrapper.NotOnlyValidEntities)
-            {
-                // var renderComponent = e?.GetComponent<Render>();
-                // if (renderComponent == null) continue;
-				if(e.Path.Contains("ExpeditionMarker"))
-				{
-					var positionedComp = e.GetComponent<Positioned>();
-					//var modelPath = e.GetComponent<RenderItem>()?.ResourcePath;
-					var text = "*"
-					var background = Color.Orange;
-					// if (modelPath == null) continue;
-						// text = modelPath.Substring(0, modelPath.IndexOf("."));
+			// foreach (var e in GameController.EntityListWrapper.OnlyValidEntities)
+            // //foreach (var e in GameController.EntityListWrapper.NotOnlyValidEntities)
+            // {
+                // // var renderComponent = e?.GetComponent<Render>();
+                // // if (renderComponent == null) continue;
+				// if(e.Path.Contains("ExpeditionMarker"))
+				// {
+					// var positionedComp = e.GetComponent<Positioned>();
+					// //var modelPath = e.GetComponent<RenderItem>()?.ResourcePath;
+					// var text = "*"
+					// var background = Color.Orange;
+					// // if (modelPath == null) continue;
+						// // text = modelPath.Substring(0, modelPath.IndexOf("."));
 						
-					var TextInfo = new MinimapTextInfo
-					{
-						Text = text,
-						FontSize = 60,
-						FontColor = Color.Orange,
-						//FontBackgroundColor = background,
-						TextWrapLength = 50
-					};
-					var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
-					if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
-						DrawToLargeMiniMapSquare(ent, ent.TextureInfo);
+					// var TextInfo = new MinimapTextInfo
+					// {
+						// Text = text,
+						// FontSize = 60,
+						// FontColor = Color.Orange,
+						// //FontBackgroundColor = background,
+						// TextWrapLength = 50
+					// };
+					// var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
+					// if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
+						// DrawToLargeMiniMapSquare(ent, ent.TextureInfo);
 					
-				}
+				// }
 				
-                //var expeditionChestComponent = e?.GetComponent<ObjectMagicProperties>();
-                //if (expeditionChestComponent == null) continue;
-                //var mods = expeditionChestComponent.Mods;
-                //if (!mods.Any(x => x.Contains("ExpeditionRelicModifier"))) continue;
+                // //var expeditionChestComponent = e?.GetComponent<ObjectMagicProperties>();
+                // //if (expeditionChestComponent == null) continue;
+                // //var mods = expeditionChestComponent.Mods;
+                // //if (!mods.Any(x => x.Contains("ExpeditionRelicModifier"))) continue;
 
-			}
+			// }
 			
             foreach (var e in GameController.EntityListWrapper.ValidEntitiesByType[EntityType.IngameIcon])
             //foreach (var e in GameController.EntityListWrapper.NotOnlyValidEntities)
