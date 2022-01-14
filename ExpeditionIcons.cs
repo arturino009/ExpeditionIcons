@@ -82,16 +82,16 @@ namespace ExpeditionIcons
 				if(e.Path.Contains("ExpeditionMarker"))
 				{
 					var positionedComp = e.GetComponent<Positioned>();
-					var modelPath = e.GetComponent<Render>().Name;
+					var animatedMetaData = e.GetComponent<Animated>().BaseAnimatedObjectEntity.Metadata;
 					//var text = "*";
-					var text = modelPath;
+
 					var background = Color.Orange;
 					//if (modelPath == null) continue;
 					//text = text && modelPath.Substring(0, modelPath.IndexOf("."));
 						
 					var TextInfo = new MinimapTextInfo
 					{
-						Text = text,
+						Text = animatedMetaData,
 						FontSize = 60,
 						FontColor = Color.Orange,
 						//FontBackgroundColor = background,
