@@ -85,8 +85,8 @@ namespace ExpeditionIcons
 					//var modelPath = e.GetComponent<RenderItem>()?.ResourcePath;
 					var text = "*";
 					var background = Color.Orange;
-					// if (modelPath == null) continue;
-						// text = modelPath.Substring(0, modelPath.IndexOf("."));
+					if (modelPath == null) continue;
+						text = modelPath.Substring(0, modelPath.IndexOf("."));
 						
 					var TextInfo = new MinimapTextInfo
 					{
