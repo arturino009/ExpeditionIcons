@@ -88,8 +88,8 @@ namespace ExpeditionIcons
 					{
 						Text = text,
 						FontSize = 10,
-						FontColor = Color.White,
-						FontBackgroundColor = background,
+						FontColor = Color.Orange,
+						//FontBackgroundColor = background,
 						TextWrapLength = 50
 					};
 					var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
