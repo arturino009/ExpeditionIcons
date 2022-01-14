@@ -463,10 +463,11 @@ namespace ExpeditionIcons
             var scale = k / camera.Height * camera.Width * 3f / 4f / mapWindow.LargeMapZoom;
             var iconZ = entity.EntityZ;
             var point = screenCenter + MapIcon.DeltaInWorldToMinimapDelta(entity.GridPos - playerPos, diag, scale, (iconZ - posZ) / (9f / mapWindow.LargeMapZoom));
-            //var size = Graphics.DrawText(WordWrap(info.Text, info.TextWrapLength), point, info.FontColor, info.FontSize, FontAlign.Center);
+            var size = Graphics.DrawText(WordWrap(info.Text, info.TextWrapLength), point, info.FontColor, info.FontSize, FontAlign.Center);
             float maxWidth = 0;
             float maxheight = 0;
             //not sure about sizes below, need test
+			
             point.Y += size.Y;
             maxheight += size.Y;
             maxWidth = Math.Max(maxWidth, size.X);
