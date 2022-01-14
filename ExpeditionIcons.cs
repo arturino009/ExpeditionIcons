@@ -82,7 +82,7 @@ namespace ExpeditionIcons
 				if(e.Path.Contains("ExpeditionMarker"))
 				{
 					var positionedComp = e.GetComponent<Positioned>();
-					var text = "*";
+					var text = "***";
 					var background = Color.Orange;
 					var TextInfo = new MinimapTextInfo
 					{
@@ -471,7 +471,8 @@ namespace ExpeditionIcons
             maxheight += size.Y;
             maxWidth = Math.Max(maxWidth, size.X);
             var background = new RectangleF(point.X - maxWidth / 2 - 3, point.Y - maxheight, maxWidth + 6, maxheight);
-            Graphics.DrawRectangle(Color.Orange,background);
+            //Graphics.DrawRectangle(Color.Orange,background);
+			Graphics.DrawBox(background, Color.Black);
         }
         public static string WordWrap(string input, int maxCharacters)
         {
