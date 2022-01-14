@@ -87,14 +87,14 @@ namespace ExpeditionIcons
 					var TextInfo = new MinimapTextInfo
 					{
 						Text = text,
-						FontSize = 16,
+						FontSize = 60,
 						FontColor = Color.Orange,
 						//FontBackgroundColor = background,
 						TextWrapLength = 50
 					};
 					var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
 					if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
-						DrawToLargeMiniMapText(ent, ent.TextureInfo);
+						DrawToLargeMiniMapSquare(ent, ent.TextureInfo);
 					
 				}
 				
@@ -444,6 +444,34 @@ namespace ExpeditionIcons
             maxWidth = Math.Max(maxWidth, size.X);
             var background = new RectangleF(point.X - maxWidth / 2 - 3, point.Y - maxheight, maxWidth + 6, maxheight);
             Graphics.DrawBox(background, info.FontBackgroundColor);
+        }
+		
+		private void DrawToLargeMiniMapSquare(StoredEntity entity, MinimapTextInfo info)
+        {
+            var camera = GameController.Game.IngameState.Camera;
+            var mapWindow = GameController.Game.IngameState.IngameUi.Map;
+            if(GameController.Game.IngameState.UIRoot.Scale == 0)
+            {
+                DebugWindow.LogError("ExpeditionIcons: Seems like UIRoot.Scale is 0. Icons will not be drawn because of that.");
+            }
+            var mapRect = mapWindow.GetClientRect();
+            var playerPos = GameController.Player.GetComponent<Positioned>().GridPos;
+            var posZ = GameController.Player.GetComponent<Render>().Z;
+            var screenCenter = new Vector2(mapRect.Width / 2, mapRect.Height / 2).Translate(0, -20) + new Vector2(mapRect.X, mapRect.Y) + new Vector2(mapWindow.LargeMapShiftX, mapWindow.LargeMapShiftY);
+            var diag = (float)Math.Sqrt(camera.Width * camera.Width + camera.Height * camera.Height);
+            var k = camera.Width < 1024f ? 1120f : 1024f;
+            var scale = k / camera.Height * camera.Width * 3f / 4f / mapWindow.LargeMapZoom;
+            var iconZ = entity.EntityZ;
+            var point = screenCenter + MapIcon.DeltaInWorldToMinimapDelta(entity.GridPos - playerPos, diag, scale, (iconZ - posZ) / (9f / mapWindow.LargeMapZoom));
+            //var size = Graphics.DrawText(WordWrap(info.Text, info.TextWrapLength), point, info.FontColor, info.FontSize, FontAlign.Center);
+            float maxWidth = 0;
+            float maxheight = 0;
+            //not sure about sizes below, need test
+            point.Y += size.Y;
+            maxheight += size.Y;
+            maxWidth = Math.Max(maxWidth, size.X);
+            var background = new RectangleF(point.X - maxWidth / 2 - 3, point.Y - maxheight, maxWidth + 6, maxheight);
+            Graphics.Rectangle(Color.Orange,background);
         }
         public static string WordWrap(string input, int maxCharacters)
         {
