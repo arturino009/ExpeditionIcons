@@ -72,6 +72,39 @@ namespace ExpeditionIcons
 
         public override void Render()
         {
+			
+			//GetComponent
+			foreach (var e in GameController.EntityListWrapper.OnlyValidEntities)
+            //foreach (var e in GameController.EntityListWrapper.NotOnlyValidEntities)
+            {
+                // var renderComponent = e?.GetComponent<Render>();
+                // if (renderComponent == null) continue;
+				if(e.Path.Contains("ExpeditionMarker"))
+				{
+					var positionedComp = e.GetComponent<Positioned>();
+					var text = ".";
+					var background = Color.Orange;
+					var TextInfo = new MinimapTextInfo
+					{
+						Text = text,
+						FontSize = 10,
+						FontColor = Color.White,
+						FontBackgroundColor = background,
+						TextWrapLength = 50
+					};
+					var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
+					if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
+						DrawToLargeMiniMapText(ent, ent.TextureInfo);
+					
+				}
+				
+                //var expeditionChestComponent = e?.GetComponent<ObjectMagicProperties>();
+                //if (expeditionChestComponent == null) continue;
+                //var mods = expeditionChestComponent.Mods;
+                //if (!mods.Any(x => x.Contains("ExpeditionRelicModifier"))) continue;
+
+			}
+			
             foreach (var e in GameController.EntityListWrapper.ValidEntitiesByType[EntityType.IngameIcon])
             //foreach (var e in GameController.EntityListWrapper.NotOnlyValidEntities)
             {
