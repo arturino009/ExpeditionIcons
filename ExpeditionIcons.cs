@@ -83,7 +83,7 @@ namespace ExpeditionIcons
 				{
 					var positionedComp = e.GetComponent<Positioned>();
 					var animatedMetaData = e.GetComponent<Animated>().BaseAnimatedObjectEntity.Metadata;
-					//var text = "*";
+					var text = "*";
 					if (animatedMetaData.Contains("elite"))
 					{
 						var background = Color.Orange;
@@ -92,7 +92,7 @@ namespace ExpeditionIcons
 						
 						var TextInfo = new MinimapTextInfo
 						{
-							Text = Text,
+							Text = text,
 							FontSize = 20,
 							FontColor = Color.Orange,
 							FontBackgroundColor = Color.Orange,
