@@ -82,7 +82,7 @@ namespace ExpeditionIcons
 				if(e.Path.Contains("ExpeditionMarker"))
 				{
 					var positionedComp = e.GetComponent<Positioned>();
-					var text = ".";
+					var text = "*";
 					var background = Color.Orange;
 					var TextInfo = new MinimapTextInfo
 					{
