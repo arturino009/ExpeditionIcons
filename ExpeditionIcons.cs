@@ -87,7 +87,7 @@ namespace ExpeditionIcons
 					var TextInfo = new MinimapTextInfo
 					{
 						Text = text,
-						FontSize = 10,
+						FontSize = 16,
 						FontColor = Color.Orange,
 						//FontBackgroundColor = background,
 						TextWrapLength = 50
