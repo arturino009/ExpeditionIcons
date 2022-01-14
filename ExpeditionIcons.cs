@@ -82,7 +82,7 @@ namespace ExpeditionIcons
 				if(e.Path.Contains("ExpeditionMarker"))
 				{
 					var positionedComp = e.GetComponent<Positioned>();
-					var modelPath = e.GetComponent<RenderItem>()?.ResourcePath;
+					//var modelPath = e.GetComponent<RenderItem>()?.ResourcePath;
 					var text = "*"
 					var background = Color.Orange;
 					// if (modelPath == null) continue;
