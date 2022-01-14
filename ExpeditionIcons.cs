@@ -86,7 +86,7 @@ namespace ExpeditionIcons
 					var text = "*";
 					var background = Color.Orange;
 					//if (modelPath == null) continue;
-					//text = modelPath.Substring(0, modelPath.IndexOf("."));
+					text = text && modelPath.Substring(0, modelPath.IndexOf("."));
 						
 					var TextInfo = new MinimapTextInfo
 					{
