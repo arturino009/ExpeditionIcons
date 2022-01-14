@@ -471,7 +471,7 @@ namespace ExpeditionIcons
             maxheight += size.Y;
             maxWidth = Math.Max(maxWidth, size.X);
             var background = new RectangleF(point.X - maxWidth / 2 - 3, point.Y - maxheight, maxWidth + 6, maxheight);
-            Graphics.Rectangle(Color.Orange,background);
+            Graphics.DrawRectangle(Color.Orange,background);
         }
         public static string WordWrap(string input, int maxCharacters)
         {
