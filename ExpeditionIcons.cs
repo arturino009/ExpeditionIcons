@@ -298,47 +298,57 @@ namespace ExpeditionIcons
                     text = text + " " +"Ench Che";
                     background = Settings.BasicColor;
                 }
+				if ((mods.Any(x => x.Contains("ExpeditionRelicModifierSirensScarabElite"))))
+                {
+                    text = text + " " +"Scarab Mon";
+                    background = Color.Purple;
+                }
+				if ((mods.Any(x => x.Contains("ExpeditionRelicModifierSirensScarabChest"))))
+                {
+                    text = text + " " +"Scarab Che";
+                    background = Color.Purple;
+                }
 				if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionInfluencedItemsElite"))))
                 {
                     text = text + " " +"Infl Mon";
-                    background = Settings.BasicColor;
+                    background = Color.Purple;
                 }
 				if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionInfluencedtemsChest"))))
                 {
                     text = text + " " +"Infl Che";
-                    background = Settings.BasicColor;
+                    background = Color.Purple;
                 }
 				
 				if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionMapsElite"))))
                 {
                     text = text + " " +"Map Mon";
-                    background = Settings.BasicColor;
+                    background = Color.Purple;
                 }
 				if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionMapsChest"))))
                 {
                     text = text + " " +"Map Che";
-                    background = Settings.BasicColor;
+                    background = Color.Purple;
                 }
 				if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionFracturedItemsElite"))))
                 {
                     text = text + " " +"Frac Mon";
-                    background = Settings.BasicColor;
+                    background = Color.Purple;
                 }
 				if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionFracturedItemsChest"))))
                 {
                     text = text + " " +"Frac Che";
-                    background = Settings.BasicColor;
+                    background = Color.Purple;
                 }
 				
 				if ((mods.Any(x => x.Contains("ExpeditionRelicModifierHarbingerCurrencyElite"))))
                 {
                     text = text + " " +"Harb Mon";
-                    background = Settings.BasicColor;
+                    background = Color.Purple;
                 }
 				if ((mods.Any(x => x.Contains("ExpeditionRelicModifierHarbingerCurrencyChest"))))
                 {
                     text = text + " " +"Harb Che";
-                    background = Settings.BasicColor;
+                    background = Color.Purple;
                 }
 				if ((mods.Any(x => x.Contains("ExpeditionRelicModifierPackSize"))))
                 {
