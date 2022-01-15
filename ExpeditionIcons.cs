@@ -84,7 +84,25 @@ namespace ExpeditionIcons
 					var positionedComp = e.GetComponent<Positioned>();
 					var animatedMetaData = e.GetComponent<Animated>().BaseAnimatedObjectEntity.Metadata;
 					var text = "*";
-					if (animatedMetaData.Contains("elite"))
+					if (animatedMetaData.Contains("elitemarker"))
+					{
+						
+					//if (modelPath == null) continue;
+					//text = text && modelPath.Substring(0, modelPath.IndexOf("."));
+						
+						var TextInfo = new MinimapTextInfo
+						{
+							Text = text,
+							FontSize = 20,
+							FontColor = Color.Yellow,
+							FontBackgroundColor = Color.Yellow,
+							TextWrapLength = 50
+						};
+						var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
+						if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
+							DrawToLargeMiniMapText(ent, ent.TextureInfo);
+					}
+					if (animatedMetaData.Contains("monstermarker"))
 					{
 						var background = Color.Orange;
 					//if (modelPath == null) continue;
@@ -94,8 +112,8 @@ namespace ExpeditionIcons
 						{
 							Text = text,
 							FontSize = 20,
-							FontColor = Color.Orange,
-							FontBackgroundColor = Color.Orange,
+							FontColor = Color.Red,
+							FontBackgroundColor = Color.Transparent,
 							TextWrapLength = 50
 						};
 						var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
