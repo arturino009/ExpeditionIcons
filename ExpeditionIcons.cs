@@ -82,11 +82,11 @@ namespace ExpeditionIcons
 				if(e.Path.Contains("Terrain/Leagues/Expedition/Tiles"))
 				{
 					var positionedComp = e.GetComponent<Positioned>();
-					var animatedMetaData = e.GetComponent<Animated>().BaseAnimatedObjectEntity.Metadata;
-					var text = "*";
+					
+					var text = "D";
 					
 					
-					text = "D";
+					
 					//if (modelPath == null) continue;
 					//text = text && modelPath.Substring(0, modelPath.IndexOf("."));
 						
