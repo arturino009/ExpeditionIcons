@@ -326,6 +326,16 @@ namespace ExpeditionIcons
                     text = text + " " +"Scarab Che";
                     background = Color.Purple;
                 }
+				if ((mods.Any(x => x.Contains("ExpeditionRelicModifierBreachSplintersElite"))))
+                {
+                    text = text + " " +"Breach Mon";
+                    background = Color.Purple;
+                }
+				if ((mods.Any(x => x.Contains("ExpeditionRelicModifierBreachSplintersChest"))))
+                {
+                    text = text + " " +"Breach Che";
+                    background = Color.Purple;
+                }
 				if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionInfluencedItemsElite"))))
                 {
                     text = text + " " +"Infl Mon";
