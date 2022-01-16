@@ -180,7 +180,25 @@ namespace ExpeditionIcons
 						if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
 							DrawToLargeMiniMapText(ent, ent.TextureInfo);
 					}
-										if (animatedMetaData.Contains("chestmarker1"))
+					if (animatedMetaData.Contains("chestmarker1"))
+					{
+						var background = Color.Orange;
+					//if (modelPath == null) continue;
+					//text = text && modelPath.Substring(0, modelPath.IndexOf("."));
+						
+						var TextInfo = new MinimapTextInfo
+						{
+							Text = text,
+							FontSize = 20,
+							FontColor = Color.White,
+							FontBackgroundColor = Color.White,
+							TextWrapLength = 50
+						};
+						var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
+						if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
+							DrawToLargeMiniMapText(ent, ent.TextureInfo);
+					}
+					if (animatedMetaData.Contains("chestmarker_signpost"))
 					{
 						var background = Color.Orange;
 					//if (modelPath == null) continue;
