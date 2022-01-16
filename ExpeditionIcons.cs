@@ -331,13 +331,13 @@ namespace ExpeditionIcons
 				(mods.Any(x => x.Contains("ExpeditionRelicModifierSirensBreachElite"))))
                 {
                     text = text + " " + "Breach Mon";
-                    background = Settings.Purple;
+                    background = Color.Purple;
                 }
 				if ((mods.Any(x => x.Contains("ExpeditionRelicModifierBreachSplintersChest")))|| 
 				(mods.Any(x => x.Contains("ExpeditionRelicModifierSirensBreachChest"))))
                 {
                     text = text + " " + "Breach Che";
-                    background = Settings.Purple;
+                    background = Color.Purple;
                 }
 				
 				if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionInfluencedItemsElite"))))
