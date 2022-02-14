@@ -106,7 +106,9 @@ namespace ExpeditionIcons
 				if(e.Path.Contains("ExpeditionMarker"))
 				{
 					var positionedComp = e.GetComponent<Positioned>();
-					var animatedMetaData = e.GetComponent<Animated>().BaseAnimatedObjectEntity.Metadata;
+					//var animatedMetaData = e.GetComponent<Animated>().BaseAnimatedObjectEntity.Metadata;
+					var animatedMetaData = e.GetComponent<Animated>().ReadObjectAt<Entity>(0x1C0).Metadata;
+					
 					var text = "*";
 					if (animatedMetaData.Contains("elitemarker"))
 					{
@@ -123,8 +125,14 @@ namespace ExpeditionIcons
 							TextWrapLength = 35
 						};
 						var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
-						if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
+						if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible){
 							DrawToLargeMiniMapText(ent, ent.TextureInfo);
+							
+							
+							
+							// Graphics.DrawText(text, textPos, textColor, TextSize, FontAlign.Center);
+						}
+						DrawEllipseToWorld(e.Pos, 15, 15, 10, Color.Red);
 					}
 					// if (animatedMetaData.Contains("monstermarker"))
 					// {
@@ -239,7 +247,16 @@ namespace ExpeditionIcons
                 var positionedComp = e.GetComponent<Positioned>();
                 var text = "";
                 var background = Color.Green;
-				
+				if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionLogbookQuantityChest")) ) && Settings.ShowLogbooks.Value)
+                {
+                    text = text + " " +"Log che";
+                    background = Settings.LogbookColor;
+                }
+                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionLogbookQuantityMonster"))) && Settings.ShowLogbooks.Value)
+                {
+                    text = text + " " +"Log mon";
+                    background = Settings.LogbookColor;
+                }
 				
 				
 				if ((mods.Any(x => x.Contains("ExpeditionRelicModifierLegionSplintersElite"))) || 
@@ -431,16 +448,7 @@ namespace ExpeditionIcons
                     background = Settings.QuantColor;
                 }
 
-                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionLogbookQuantityChest")) ) && Settings.ShowLogbooks.Value)
-                {
-                    text = text + " " +"Log che";
-                    background = Settings.LogbookColor;
-                }
-                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionLogbookQuantityMonster"))) && Settings.ShowLogbooks.Value)
-                {
-                    text = text + " " +"Log mon";
-                    background = Settings.LogbookColor;
-                }
+
 
                 if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionBasicCurrencyChest"))) && Settings.ShowBasicCurrency.Value)
                 {
@@ -603,6 +611,36 @@ namespace ExpeditionIcons
             var background = new RectangleF(point.X - maxWidth / 2 - 3, point.Y - maxheight, maxWidth + 6, maxheight);
             Graphics.DrawBox(background, info.FontBackgroundColor);
         }
+		 public void DrawEllipseToWorld(Vector3 vector3Pos, int radius, int points, int lineWidth, Color color)
+        {
+            var camera = GameController.Game.IngameState.Camera;
+
+            var plottedCirclePoints = new List<Vector3>();
+            var slice = 2 * Math.PI / points;
+            for (var i = 0; i < points; i++)
+            {
+                var angle = slice * i;
+                var x = (decimal)vector3Pos.X + decimal.Multiply((decimal)radius, (decimal)Math.Cos(angle));
+                var y = (decimal)vector3Pos.Y + decimal.Multiply((decimal)radius, (decimal)Math.Sin(angle));
+                plottedCirclePoints.Add(new Vector3((float)x, (float)y, vector3Pos.Z));
+            }
+
+            for (var i = 0; i < plottedCirclePoints.Count; i++)
+            {
+                if (i >= plottedCirclePoints.Count - 1)
+                {
+                    var pointEnd1 = camera.WorldToScreen(plottedCirclePoints.Last());
+                    var pointEnd2 = camera.WorldToScreen(plottedCirclePoints[0]);
+                    Graphics.DrawLine(pointEnd1, pointEnd2, lineWidth, color);
+                    return;
+                }
+
+                var point1 = camera.WorldToScreen(plottedCirclePoints[i]);
+                var point2 = camera.WorldToScreen(plottedCirclePoints[i + 1]);
+                Graphics.DrawLine(point1, point2, lineWidth, color);
+            }
+        }
+    
 		
 		private void DrawToLargeMiniMapSquare(StoredEntity entity, MinimapTextInfo info)
         {
