@@ -58,5 +58,15 @@ namespace ExpeditionIcons
         public ToggleNode CritImmune { get; set; } = new ToggleNode(false);
         [Menu("Color for immunities", parentIndex = 101)]
         public ColorNode ImmuneColor { get; set; } = new ColorNode(Color.Red);
+
+
+        [Menu("Explosive settings", 102)]
+        public EmptyNode SettingsExplosive { get; set; }
+        [Menu("Show explosive range", parentIndex = 102)]
+        public ToggleNode ShowExplosives { get; set; } = new ToggleNode(true);
+        [Menu("Color for explosive range", parentIndex = 102)]
+        public ColorNode ExplosiveColor { get; set; } = new ColorNode(Color.Gray);
+        [Menu("Explosive range (configure manually so it matches ingame)", 102)] 
+        public RangeNode<int> ExplosiveRange { get; set; } = new RangeNode<int>(10, 310, 600);
     }
 }
