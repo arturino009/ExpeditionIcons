@@ -574,8 +574,20 @@ namespace ExpeditionIcons
                     FontBackgroundColor = background,
                     TextWrapLength = 50
                 };
+
+                var location = e.Pos;
+                location.Z = 0;
+                var showElement = true;
+                foreach (var explosive in explosives)
+                {
+                    if (Vector3.Distance(explosive, location) < Settings.ExplosiveRange + 20)
+                    {
+                        showElement = false;
+                        break;
+                    }
+                }
                 var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
-                if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
+                if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible && showElement)
                     DrawToLargeMiniMapText(ent, ent.TextureInfo);
             }
         }
