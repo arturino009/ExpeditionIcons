@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{46AD79D6-911F-47CE-88BB-A815B5AF992C}</ProjectGuid>
+    <ProjectGuid>{153A02E1-5D33-48FD-B71A-10C4EAA4F4AC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ExpeditionIcons</RootNamespace>
@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\PoeHelper\Plugins\Compiled\ExpeditionIcons\</OutputPath>
+    <OutputPath>..\..\..\PoeHelper\Plugins\Compiled\ExpeditionIcons\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -72,7 +72,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\ExileApi\Core\Core.csproj">
+    <ProjectReference Include="..\..\Core\Core.csproj">
       <Project>{5539d732-34a7-44ab-9e28-116c3429b12a}</Project>
       <Name>Core</Name>
       <Private>False</Private>
