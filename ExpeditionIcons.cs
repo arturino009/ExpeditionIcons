@@ -21,7 +21,6 @@ namespace ExpeditionIcons
         private CachedValue<RectangleF> _mapRect;
         private IngameUIElements ingameStateIngameUi;
         private float k;
-        private bool largeMap;
         private float scale;
         private Vector2 screentCenterCache;
         private RectangleF MapRect => _mapRect?.Value ?? (_mapRect = new TimeCache<RectangleF>(() => mapWindow.GetClientRect(), 100)).Value;
@@ -53,12 +52,10 @@ namespace ExpeditionIcons
                 {
                     var mapRect = ingameStateIngameUi.Map.SmallMiniMap.GetClientRectCache;
                     screentCenterCache = new Vector2(mapRect.X + mapRect.Width / 2, mapRect.Y + mapRect.Height / 2);
-                    largeMap = false;
                 }
                 else if (ingameStateIngameUi.Map.LargeMap.IsVisibleLocal)
                 {
                     screentCenterCache = screenCenter;
-                    largeMap = true;
                 }
 
                 k = camera.Width < 1024f ? 1120f : 1024f;
@@ -149,23 +146,6 @@ namespace ExpeditionIcons
                 var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
                 if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
                     DrawToLargeMiniMapText(ent, ent.TextureInfo);
-
-        //        if (storedAreaEntities.Any(x => x.GridPos == positionedComp.GridPos))
-        //        {
-        //            var findIndex = storedAreaEntities.FindIndex(x => x.GridPos == positionedComp.GridPos);
-        //            storedAreaEntities[findIndex] = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
-        //        }
-        //        else
-        //        {
-        //            storedAreaEntities.Add(new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo));
-        //        }
-
-        //    }
-        //    foreach (var storedAreaEntity in storedAreaEntities)
-        //    {
-        //        if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
-        //            DrawToLargeMiniMapText(storedAreaEntity, storedAreaEntity.TextureInfo);
-        //    }
             }
         }
 
@@ -275,26 +255,3 @@ namespace ExpeditionIcons
         }
     }
 }
-
-    
-    //ExpeditionRelicModifierImmuneChaosDamage
-    //ExpeditionRelicModifierImmuneColdDamage
-    //ExpeditionRelicModifierImmuneFireDamage
-    //ExpeditionRelicModifierImmuneLightningDamage
-    //ExpeditionRelicModifierImmunePhysicalDamage
-    //ExpeditionRelicModifierImmuneStatusAilments
-    //ExpeditionRelicModifierImmuneToCurses
-    //ExpeditionRelicModifierCannotBeCrit
-    
-
-    //ExpeditionRelicModifierElitesDuplicated
-    //ExpeditionRelicModifierStackedDeckChest
-    //ExpeditionRelicModifierStackedDeckElite
-    //ExpeditionRelicModifierExpeditionBasicCurrencyChest
-    //ExpeditionRelicModifierExpeditionBasicCurrencyElite
-    //ExpeditionRelicModifierExpeditionLogbookQuantityChest
-    //ExpeditionRelicModifierExpeditionLogbookQuantityMonster
-    //ExpeditionRelicModifierExpeditionCurrencyQuantityChest
-    //ExpeditionRelicModifierExpeditionCurrencyQuantityMonster
-    //ExpeditionRelicModifierItemQuantityChest
-    //ExpeditionRelicModifierItemQuantityMonster
