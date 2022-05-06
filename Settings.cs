@@ -67,6 +67,6 @@ namespace ExpeditionIcons
         [Menu("Color for explosive range", parentIndex = 102)]
         public ColorNode ExplosiveColor { get; set; } = new ColorNode(Color.Gray);
         [Menu("Explosive range (configure manually so it matches ingame)", 102)] 
-        public RangeNode<int> ExplosiveRange { get; set; } = new RangeNode<int>(10, 310, 600);
+        public RangeNode<int> ExplosiveRange { get; set; } = new RangeNode<int>(310, 310, 600);
     }
 }
