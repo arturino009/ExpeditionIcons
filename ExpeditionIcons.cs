@@ -78,7 +78,7 @@ namespace ExpeditionIcons
         }
         public override void DrawSettings()
         {
-            if (ImGui.Button("Calculate optimal explosive placement (will freeze for a while if in a logbook!!!!!!!!)"))
+            if (ImGui.Button("Calculate optimal explosive placement (will freeze for a while if in a logbook!!!!!!!! also load all runic markers before using)"))
             {
                 efficientPoints.Clear();
                 getBestPositions();
