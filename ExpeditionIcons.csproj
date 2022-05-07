@@ -51,6 +51,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ImGui.NET">
+      <HintPath>..\..\..\..\PoeHelper\ImGui.NET.dll</HintPath>
+	  <Private>False</Private>
+    </Reference>
     <Reference Include="SharpDX">
       <HintPath>..\..\..\..\PoeHelper\SharpDX.dll</HintPath>
       <Private>False</Private>

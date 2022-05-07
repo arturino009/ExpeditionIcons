@@ -8,6 +8,8 @@ namespace ExpeditionIcons
     public class Settings : ISettings
     {
         public ToggleNode Enable { get; set; } = new ToggleNode(false);
+        [Menu("Optimal placement color")]
+        public ColorNode OptimalColor { get; set; } = new ColorNode(Color.Yellow);
         [Menu("Good mods", 100)]
         public EmptyNode SettingsEmptyGood { get; set; }
 
@@ -40,6 +42,11 @@ namespace ExpeditionIcons
         public ToggleNode ShowArtifact { get; set; } = new ToggleNode(true);
         [Menu("Color", parentIndex = 100)]
         public ColorNode ArtifactColor { get; set; } = new ColorNode(Color.Green);
+        [Menu("Show packsize", parentIndex = 100)]
+        public ToggleNode ShowPacksize { get; set; } = new ToggleNode(true);
+        [Menu("Color", parentIndex = 100)]
+        public ColorNode PacksizeColor { get; set; } = new ColorNode(Color.Green);
+
 
 
         [Menu("Bad mods", 101)]

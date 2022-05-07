@@ -10,6 +10,7 @@ using ExileCore.Shared.Abstract;
 using ExileCore.Shared.Cache;
 using ExileCore.Shared.Enums;
 using ExileCore.Shared.Helpers;
+using ImGuiNET;
 using SharpDX;
 using Map = ExileCore.PoEMemory.Elements.Map;
 
@@ -30,6 +31,8 @@ namespace ExpeditionIcons
             new Vector2(MapRect.Width / 2, MapRect.Height / 2 - 20) + new Vector2(MapRect.X, MapRect.Y) +
             new Vector2(mapWindow.LargeMapShiftX, mapWindow.LargeMapShiftY);
         List<Vector3> explosives = new List<Vector3>() { };
+        List<Vector3> remnants = new List<Vector3>() { };
+        List<Vector3> efficientPoints = new List<Vector3>() { };
         public override bool Initialise()
         {
             CanUseMultiThreading = true;
@@ -68,34 +71,60 @@ namespace ExpeditionIcons
             }
         }
 
+        public override void AreaChange(AreaInstance area)
+        {
+            remnants.Clear();
+            efficientPoints.Clear();
+        }
+        public override void DrawSettings()
+        {
+            if (ImGui.Button("Calculate optimal explosive placement (will freeze for a while if in a logbook!!!!!!!!)"))
+            {
+                efficientPoints.Clear();
+                getBestPositions();
+            }
+            base.DrawSettings();
+        }
+
         public override void Render()
         {
             explosives.Clear();
             foreach (var e in GameController.EntityListWrapper.OnlyValidEntities)
             {
+                if (e.Path == null) continue;
                 if (e.Path.Contains("ExpeditionExplosive") && !e.Path.Contains("Fuse"))
                 {
-                    var position = e.Pos;
-                    position.Z = 0;
+                    var location = e.Pos;
+                    location.Z = 0;
                     if (Settings.ShowExplosives.Value) 
                     {
-                        DrawEllipseToWorld(position, Settings.ExplosiveRange, 50, 4, Settings.ExplosiveColor);
+                        DrawEllipseToWorld(location, Settings.ExplosiveRange, 50, 4, Settings.ExplosiveColor);
                     }
-                    if (!explosives.Contains(position))
+                    if (!explosives.Contains(location))
                     {
-                        explosives.Add(position);
+                        explosives.Add(location);
                     }
                     continue;
                 }
+            }
+
+            if(efficientPoints.Count != 0)
+            {
+                foreach(var point in efficientPoints)
+                {
+                    DrawEllipseToWorld(point, Settings.ExplosiveRange, 50, 4, Settings.OptimalColor);
+                }
+
             }
 
             //GetComponent
             foreach (var e in GameController.EntityListWrapper.OnlyValidEntities)
             //foreach (var e in GameController.EntityListWrapper.NotOnlyValidEntities)
             {
+                if (e.Path == null) continue;
                 // var renderComponent = e?.GetComponent<Render>();
                 // if (renderComponent == null) continue;
-                if(e.Path.Contains("Terrain/Leagues/Expedition/Tiles"))
+                if (e.Path.Contains("Terrain/Leagues/Expedition/Tiles"))
 				{
 					var positionedComp = e.GetComponent<Positioned>();
 					
@@ -162,6 +191,10 @@ namespace ExpeditionIcons
                         if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible && showElement){
                             DrawToLargeMiniMapText(ent, ent.TextureInfo);
 
+                        if (!remnants.Contains(location))
+                        {
+                            remnants.Add(location);
+                        }
 
 
                             // Graphics.DrawText(text, textPos, textColor, TextSize, FontAlign.Center);
@@ -487,10 +520,10 @@ namespace ExpeditionIcons
     //                text = text + " " +"Harb Che";
     //                background = Color.Purple;
     //            }
-				if ((mods.Any(x => x.Contains("ExpeditionRelicModifierPackSize"))))
+				if ((mods.Any(x => x.Contains("ExpeditionRelicModifierPackSize"))) && Settings.ShowPacksize.Value)
                 {
                     text = text + " " +"Pack ";
-                    background = Settings.DoubleColor;
+                    background = Settings.PacksizeColor;
                 }
 				
 				//if ((mods.Any(x => x.Contains("ExpeditionRelicModifierRareMonsterChance"))))
@@ -649,8 +682,70 @@ namespace ExpeditionIcons
             }
         }
     
-		
-		private void DrawToLargeMiniMapSquare(StoredEntity entity, MinimapTextInfo info)
+        public void getBestPositions()
+        {
+            try
+            {
+                int placements = Int32.Parse(ingameStateIngameUi.GetChildFromIndices(118, 7, 12, 2, 0, 0, 0).Text); //the number of explosives from UI
+                for (int x = 0; x < placements; x++)
+                {
+                    var minX = remnants.OrderBy(p => p.X).FirstOrDefault();
+                    var maxX = remnants.OrderBy(p => p.X).LastOrDefault();
+                    var minY = remnants.OrderBy(p => p.Y).FirstOrDefault();
+                    var maxY = remnants.OrderBy(p => p.Y).LastOrDefault();
+                    Vector2 minCorner = new Vector2(minX.X, minY.Y);
+                    Vector2 maxCorner = new Vector2(maxX.X, maxY.Y);
+                    List<Vector3> pointsToDelete = new List<Vector3>() { };
+                    Vector3 optimalPoint = new Vector3(0, 0, 0);
+                    float smallestSum = 1000000;
+                    int biggestCount = 0;
+                    for (var i = minCorner.X + 10; i < maxCorner.X; i += 10)
+                    {
+                        for (var j = minCorner.Y + 10; j < maxCorner.Y; j += 10)
+                        {
+                            Vector3 currentCenter = new Vector3(i, j, 0);
+                            List<Vector3> temp = new List<Vector3>() { };
+                            float overallSum = 0;
+                            int currentCount = 0;
+                            foreach (Vector3 remnant in remnants)
+                            {
+                                float distance = Vector3.Distance(remnant, currentCenter);
+                                if (distance < Settings.ExplosiveRange + 10)
+                                {
+                                    currentCount++;
+                                    overallSum += distance;
+                                    temp.Add(remnant);
+                                }
+                            }
+                            if (currentCount > biggestCount)
+                            {
+                                biggestCount = currentCount;
+                                smallestSum = overallSum / currentCount;
+                                pointsToDelete = temp;
+                                optimalPoint = currentCenter;
+                            }
+                            else if (currentCount == biggestCount && smallestSum > overallSum / currentCount)
+                            {
+                                smallestSum = overallSum / currentCount;
+                                pointsToDelete = temp;
+                                optimalPoint = currentCenter;
+                            }
+                        }
+                    }
+                    efficientPoints.Add(optimalPoint);
+                    if (minCorner == maxCorner)
+                    {
+                        optimalPoint.X = minCorner.X;
+                        optimalPoint.Y = minCorner.Y;
+                        efficientPoints.Add(optimalPoint);
+                        break;
+                    }
+                    remnants = remnants.Except(pointsToDelete).ToList();
+                }
+            }catch{ }
+        }
+
+        private void DrawToLargeMiniMapSquare(StoredEntity entity, MinimapTextInfo info)
         {
             var camera = GameController.Game.IngameState.Camera;
             var mapWindow = GameController.Game.IngameState.IngameUi.Map;
