@@ -31,12 +31,11 @@ namespace ExpeditionIcons
         private Vector2 screenCenter =>
             new Vector2(MapRect.Width / 2, MapRect.Height / 2 - 20) + new Vector2(MapRect.X, MapRect.Y) +
             new Vector2(mapWindow.LargeMapShiftX, mapWindow.LargeMapShiftY);
-        List<Vector2> explosives = new List<Vector2>();
-        List<Vector2> remnants = new List<Vector2>();
-        List<Vector2> artifacts = new List<Vector2>();
-        List<Vector2> efficientLines = new List<Vector2>();
-        List<Vector2> efficientCircles = new List<Vector2>();
-        Vector2 detonator = new Vector2();
+        List<Entity> explosives = new List<Entity>();
+        List<Entity> remnants = new List<Entity>();
+        List<Entity> artifacts = new List<Entity>();
+        List<Entity> efficientLines = new List<Entity>();
+        Entity detonator = new Entity();
         public override bool Initialise()
         {
             CanUseMultiThreading = true;
@@ -54,6 +53,11 @@ namespace ExpeditionIcons
         {
             try
             {
+                if (Input.GetKeyState(Settings.optimalMap.Value))
+                {
+                    efficientLines.Clear();
+                    getBestLine(remnants);
+                }
                 ingameStateIngameUi = GameController.Game.IngameState.IngameUi;
 
                 if (ingameStateIngameUi.Map.SmallMiniMap.IsVisibleLocal)
@@ -78,28 +82,27 @@ namespace ExpeditionIcons
         public override void AreaChange(AreaInstance area)
         {
             efficientLines.Clear();
-            efficientCircles.Clear();
         }
         public override void DrawSettings()
         {
-            if (ImGui.Button("Calculate optimal remnant positions (will freeze for a while if in a logbook!!!!!!!! also load all runic markers before using)"))
+            if (ImGui.Button("Calculate for map (maximize runic monsters and rewards from monsters)"))
             {
                 efficientLines.Clear();
                 getBestLine(remnants);
             }
-            if (ImGui.Button("Calculate optimal artifact placement"))
+            if (ImGui.Button("Calculate for logbook (maximize artifacts and rewards from chests)"))
             {
-                efficientCircles.Clear();
-                getBestArtifacts();
+                efficientLines.Clear();
+                getBestLine(artifacts);
             }
             base.DrawSettings();
             if (ImGui.Button("Calculate explosion radius. Place 1 explosive and make it intersect the detonator"))
             {
-                Settings.ExplosiveRange.Value = Vector2.Distance(explosives[0], detonator);
+                Settings.ExplosiveRange.Value = Vector3.Distance(explosives[0].Pos, detonator.Pos);
             }
             if (ImGui.Button("Calculate explosion distance. Place 1 explosive maximum distance from the detonator"))
             {
-                Settings.ExplosiveDistance.Value = Vector2.Distance(explosives[0], detonator);
+                Settings.ExplosiveDistance.Value = Vector3.Distance(explosives[0].Pos, detonator.Pos);
             }
         }
 
@@ -113,7 +116,7 @@ namespace ExpeditionIcons
                 if (e.Path == null) continue;
                 if (e.Path.Contains("ExpeditionExplosive") && !e.Path.Contains("Fuse"))
                 {
-                    explosives.Add((Vector2)e.Pos);
+                    explosives.Add(e);
                     continue;
                 }
             }
@@ -124,22 +127,19 @@ namespace ExpeditionIcons
                 //{
                 //    DrawEllipseToWorld(point, Settings.ExplosiveRange, 50, 4, Settings.OptimalColor);
                 //}
-                Graphics.DrawLine(camera.WorldToScreen((Vector3)detonator), camera.WorldToScreen((Vector3)efficientLines[0]), 3, Color.Blue);
-                Vector3 prev = (Vector3)efficientLines[0];
-                foreach (var point in efficientLines)
+                Graphics.DrawLine(camera.WorldToScreen(detonator.Pos), camera.WorldToScreen(efficientLines[0].Pos), 3, Settings.OptimalColor);
+                if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
+                    DrawToLargeMiniMapLine(detonator, efficientLines[0]);
+                Entity prev = efficientLines[0];
+                foreach (Entity point in efficientLines)
                 {
                     if (point != efficientLines.First())
                     {
-                        Graphics.DrawLine(camera.WorldToScreen(prev), camera.WorldToScreen((Vector3)point), 3, Settings.OptimalColor);
-                        prev = (Vector3)point;
+                        Graphics.DrawLine(camera.WorldToScreen(prev.Pos), camera.WorldToScreen(point.Pos), 3, Settings.OptimalColor);
+                        if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
+                            DrawToLargeMiniMapLine(prev, point);
+                        prev = point;
                     }
-                }
-            }
-            if (efficientCircles.Count != 0)
-            {
-                foreach (var point in efficientCircles)
-                {
-                    DrawEllipseToWorld((Vector3)point, (int)Settings.ExplosiveRange, 50, 4, Settings.OptimalColor);
                 }
             }
 
@@ -152,7 +152,7 @@ namespace ExpeditionIcons
                 // if (renderComponent == null) continue;
                 if (e.Path.Contains("ExpeditionDetonator"))
                 {
-                    detonator = (Vector2)e.Pos;
+                    detonator = e;
                     continue;
                 }
                 if (e.Path.Contains("Terrain/Leagues/Expedition/Tiles"))
@@ -161,7 +161,7 @@ namespace ExpeditionIcons
 
                     var text = "D";
 
-                    artifacts.Add((Vector2)e.Pos);
+                    artifacts.Add(e);
 
                     //if (modelPath == null) continue;
                     //text = text && modelPath.Substring(0, modelPath.IndexOf("."));
@@ -208,7 +208,7 @@ namespace ExpeditionIcons
                         var showElement = true;
                         foreach (var explosive in explosives)
                         {
-                            if (Vector2.Distance(explosive, (Vector2)e.Pos) < Settings.ExplosiveRange + 20)
+                            if (Vector3.Distance(explosive.Pos, e.Pos) < Settings.ExplosiveRange + 20)
                             {
                                 showElement = false;
                                 break;
@@ -223,19 +223,23 @@ namespace ExpeditionIcons
                         if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible && showElement)
                         {
                             DrawToLargeMiniMapText(ent, ent.TextureInfo);
-                            remnants.Add((Vector2)e.Pos);
+                            remnants.Add(e);
 
                             // Graphics.DrawText(text, textPos, textColor, TextSize, FontAlign.Center);
                         }
                     }
-                    if (animatedMetaData.Contains("ChestLeague"))
+                    if ((animatedMetaData.Contains("ChestLeague") && Settings.ShowArtifact.Value) ||
+                        (animatedMetaData.Contains("ChestDivinationCards") && Settings.ShowStackedDecks.Value) ||
+                        (animatedMetaData.Contains("ChestCurrency") && Settings.ShowBasicCurrency.Value) ||
+                        (animatedMetaData.Contains("ChestTrinkets") && Settings.ShowJewellery.Value) ||
+                        (animatedMetaData.Contains("ChestHarbinger") && Settings.ShowHarbinger.Value))
                     {
                         var location = e.Pos;
                         location.Z = 0;
                         var showElement = true;
                         foreach (var explosive in explosives)
                         {
-                            if (Vector2.Distance(explosive, (Vector2)e.Pos) < Settings.ExplosiveRange + 20)
+                            if (Vector3.Distance(explosive.Pos, e.Pos) < Settings.ExplosiveRange + 20)
                             {
                                 showElement = false;
                                 break;
@@ -245,7 +249,7 @@ namespace ExpeditionIcons
                         {
                             DrawEllipseToWorld(location, 12, 15, 8, Color.Red);
                         }
-                        artifacts.Add((Vector2)e.Pos);
+                        artifacts.Add(e);
                     }
                     // if (animatedMetaData.Contains("monstermarker"))
                     // {
@@ -285,7 +289,7 @@ namespace ExpeditionIcons
                             var showElement = true;
                             foreach (var explosive in explosives)
                             {
-                                if (Vector2.Distance(explosive, (Vector2)e.Pos) < Settings.ExplosiveRange + 20)
+                                if (Vector3.Distance(explosive.Pos, e.Pos) < Settings.ExplosiveRange + 20)
                                 {
                                     showElement = false;
                                     break;
@@ -314,7 +318,7 @@ namespace ExpeditionIcons
                             var showElement = true;
                             foreach (var explosive in explosives)
                             {
-                                if (Vector2.Distance(explosive, (Vector2)e.Pos) < Settings.ExplosiveRange + 20)
+                                if (Vector3.Distance(explosive.Pos, e.Pos) < Settings.ExplosiveRange + 20)
                                 {
                                     showElement = false;
                                     break;
@@ -341,7 +345,7 @@ namespace ExpeditionIcons
                             var showElement = true;
                             foreach (var explosive in explosives)
                             {
-                                if (Vector2.Distance(explosive, (Vector2)e.Pos) < Settings.ExplosiveRange + 20)
+                                if (Vector3.Distance(explosive.Pos, e.Pos) < Settings.ExplosiveRange + 20)
                                 {
                                     showElement = false;
                                     break;
@@ -369,7 +373,7 @@ namespace ExpeditionIcons
                             var showElement = true;
                             foreach (var explosive in explosives)
                             {
-                                if (Vector2.Distance(explosive, (Vector2)e.Pos) < Settings.ExplosiveRange + 20)
+                                if (Vector3.Distance(explosive.Pos, e.Pos) < Settings.ExplosiveRange + 20)
                                 {
                                     showElement = false;
                                     break;
@@ -401,13 +405,19 @@ namespace ExpeditionIcons
                 {
                     text = text + " " + "Log che";
                     background = Settings.LogbookColor;
-                    remnants.Add((Vector2)e.Pos);
+                    if (!artifacts.Contains(e))
+                    {
+                        artifacts.Add(e);
+                    }
                 }
                 if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionLogbookQuantityMonster"))) && Settings.ShowLogbooks.Value)
                 {
                     text = text + " " + "Log mon";
                     background = Settings.LogbookColor;
-                    remnants.Add((Vector2)e.Pos);
+                    if (!remnants.Contains(e))
+                    {
+                        remnants.Add(e);
+                    }
                 }
 
                 //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierLegionSplintersElite"))) || 
@@ -479,11 +489,19 @@ namespace ExpeditionIcons
                 {
                     text = text + " " + "J Mon";
                     background = Settings.JewelleryColor;
+                    if (!remnants.Contains(e))
+                    {
+                        remnants.Add(e);
+                    }
                 }
                 if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionRareTrinketChest"))) && Settings.ShowJewellery.Value)
                 {
                     text = text + " " + "J Che";
                     background = Settings.JewelleryColor;
+                    if (!artifacts.Contains(e))
+                    {
+                        artifacts.Add(e);
+                    }
                 }
                 //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierEternalEmpireEnchantElite"))))
                 //            {
@@ -499,11 +517,19 @@ namespace ExpeditionIcons
                 {
                     text = text + " " + "Scarab Mon";
                     background = Color.Purple;
+                    if (!remnants.Contains(e))
+                    {
+                        remnants.Add(e);
+                    }
                 }
                 if ((mods.Any(x => x.Contains("ExpeditionRelicModifierSirensScarabChest"))))
                 {
                     text = text + " " + "Scarab Che";
                     background = Color.Purple;
+                    if (!artifacts.Contains(e))
+                    {
+                        artifacts.Add(e);
+                    }
                 }
 
                 //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierBreachSplintersElite"))) || 
@@ -523,11 +549,19 @@ namespace ExpeditionIcons
                 {
                     text = text + " " + "Infl Mon";
                     background = Settings.InfluenceColor;
+                    if (!remnants.Contains(e))
+                    {
+                        remnants.Add(e);
+                    }
                 }
                 if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionInfluencedtemsChest"))) && Settings.ShowInfluence.Value)
                 {
                     text = text + " " + "Infl Che";
                     background = Settings.InfluenceColor;
+                    if (!artifacts.Contains(e))
+                    {
+                        artifacts.Add(e);
+                    }
                 }
 
                 //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionMapsElite"))))
@@ -551,16 +585,24 @@ namespace ExpeditionIcons
                 //                background = Color.Purple;
                 //            }
 
-                //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierHarbingerCurrencyElite"))))
-                //            {
-                //                text = text + " " +"Harb Mon";
-                //                background = Color.Purple;
-                //            }
-                //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierHarbingerCurrencyChest"))))
-                //            {
-                //                text = text + " " +"Harb Che";
-                //                background = Color.Purple;
-                //            }
+                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierHarbingerCurrencyElite"))) && Settings.ShowHarbinger.Value)
+                {
+                    text = text + " " + "Harb Mon";
+                    background = Settings.HarbingerColor;
+                    if (!remnants.Contains(e))
+                    {
+                        remnants.Add(e);
+                    }
+                }
+                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierHarbingerCurrencyChest"))) && Settings.ShowHarbinger.Value)
+                {
+                    text = text + " " + "Harb Che";
+                    background = Settings.HarbingerColor;
+                    if (!artifacts.Contains(e))
+                    {
+                        artifacts.Add(e);
+                    }
+                }
                 if ((mods.Any(x => x.Contains("ExpeditionRelicModifierPackSize"))) && Settings.ShowPacksize.Value)
                 {
                     text = text + " " + "Pack ";
@@ -577,7 +619,10 @@ namespace ExpeditionIcons
                 {
                     text = text + " " + "Art che";
                     background = Settings.ArtifactColor;
-                    artifacts.Add((Vector2)e.Pos);
+                    if (!artifacts.Contains(e))
+                    {
+                        artifacts.Add(e);
+                    }
                 }
 
                 if ((
@@ -585,49 +630,82 @@ namespace ExpeditionIcons
                 {
                     text = text + " " + "Art mon";
                     background = Settings.ArtifactColor;
+                    if (!remnants.Contains(e))
+                    {
+                        remnants.Add(e);
+                    }
                 }
 
                 if ((mods.Any(x => x.Contains("ExpeditionRelicModifierItemQuantityChest"))) && Settings.ShowQuant.Value)
                 {
                     text = text + " " + "Quant che";
                     background = Settings.QuantColor;
+                    if (!artifacts.Contains(e))
+                    {
+                        artifacts.Add(e);
+                    }
                 }
                 if ((
                     mods.Any(x => x.Contains("ExpeditionRelicModifierItemQuantityMonster"))) && Settings.ShowQuant.Value)
                 {
                     text = text + " " + "Quant mon";
                     background = Settings.QuantColor;
-                    remnants.Add((Vector2)e.Pos);
+                    if (!remnants.Contains(e))
+                    {
+                        remnants.Add(e);
+                    }
                 }
 
                 if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionBasicCurrencyChest"))) && Settings.ShowBasicCurrency.Value)
                 {
                     text = text + " " + "Curr che";
                     background = Settings.BasicColor;
+                    if (!artifacts.Contains(e))
+                    {
+                        artifacts.Add(e);
+                    }
                 }
                 if ((
                     mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionBasicCurrencyElite"))) && Settings.ShowBasicCurrency.Value)
                 {
                     text = text + " " + "Curr mon";
                     background = Settings.BasicColor;
+                    if (!remnants.Contains(e))
+                    {
+                        remnants.Add(e);
+                    }
                 }
                 if ((mods.Any(x => x.Contains("ExpeditionRelicModifierStackedDeckChest"))) && Settings.ShowStackedDecks.Value)
                 {
                     text = text + " " + "Deck che";
                     background = Settings.StackedColor;
+                    if (!artifacts.Contains(e))
+                    {
+                        artifacts.Add(e);
+                    }
                 }
                 if ((
                     mods.Any(x => x.Contains("ExpeditionRelicModifierStackedDeckElite"))) && Settings.ShowStackedDecks.Value)
                 {
                     text = text + " " + "Deck mon";
                     background = Settings.StackedColor;
+                    if (!remnants.Contains(e))
+                    {
+                        remnants.Add(e);
+                    }
                 }
                 if (mods.Any(x => x.Contains("ExpeditionRelicModifierElitesDuplicated")) && Settings.ShowDouble.Value)
                 {
                     text = text + " " + "POG*2";
                     background = Settings.DoubleColor;
-                    artifacts.Add((Vector2)e.Pos);
-                    remnants.Add((Vector2)e.Pos);
+                    if (!remnants.Contains(e))
+                    {
+                        remnants.Add(e);
+                    }
+                    if (!artifacts.Contains(e))
+                    {
+                        artifacts.Add(e);
+                    }
                 }
 
                 if ((mods.Any(x => x.Contains("ExpeditionRelicModifierImmunePhysicalDamage")) && Settings.PhysImmune.Value) ||
@@ -640,6 +718,14 @@ namespace ExpeditionIcons
                 {
                     text = "WARN";
                     background = Settings.ImmuneColor;
+                    if (remnants.Contains(e))
+                    {
+                        remnants.Remove(e);
+                    }
+                    if (artifacts.Contains(e))
+                    {
+                        artifacts.Remove(e);
+                    }
                 }
 
                 if (text == "") continue;
@@ -656,7 +742,7 @@ namespace ExpeditionIcons
                 var showElement = true;
                 foreach (var explosive in explosives)
                 {
-                    if (Vector2.Distance(explosive, (Vector2)e.Pos) < Settings.ExplosiveRange + 20)
+                    if (Vector3.Distance(explosive.Pos, e.Pos) < Settings.ExplosiveRange + 20)
                     {
                         showElement = false;
                         break;
@@ -672,7 +758,7 @@ namespace ExpeditionIcons
         {
             var camera = GameController.Game.IngameState.Camera;
             var mapWindow = GameController.Game.IngameState.IngameUi.Map;
-            if(GameController.Game.IngameState.UIRoot.Scale == 0)
+            if (GameController.Game.IngameState.UIRoot.Scale == 0)
             {
                 DebugWindow.LogError("ExpeditionIcons: Seems like UIRoot.Scale is 0. Icons will not be drawn because of that.");
             }
@@ -695,7 +781,28 @@ namespace ExpeditionIcons
             var background = new RectangleF(point.X - maxWidth / 2 - 3, point.Y - maxheight, maxWidth + 6, maxheight);
             Graphics.DrawBox(background, info.FontBackgroundColor);
         }
-		public void DrawEllipseToWorld(Vector3 vector3Pos, int radius, int points, int lineWidth, Color color)
+        private void DrawToLargeMiniMapLine(Entity prev, Entity point)
+        {
+            var camera = GameController.Game.IngameState.Camera;
+            var mapWindow = GameController.Game.IngameState.IngameUi.Map;
+            if (GameController.Game.IngameState.UIRoot.Scale == 0)
+            {
+                DebugWindow.LogError("ExpeditionIcons: Seems like UIRoot.Scale is 0. Icons will not be drawn because of that.");
+            }
+            var mapRect = mapWindow.GetClientRect();
+            var playerPos = GameController.Player.GetComponent<Positioned>().GridPos;
+            var posZ = GameController.Player.GetComponent<Render>().Z;
+            var screenCenter = new Vector2(mapRect.Width / 2, mapRect.Height / 2).Translate(0, -20) + new Vector2(mapRect.X, mapRect.Y) + new Vector2(mapWindow.LargeMapShiftX, mapWindow.LargeMapShiftY);
+            var diag = (float)Math.Sqrt(camera.Width * camera.Width + camera.Height * camera.Height);
+            var k = camera.Width < 1024f ? 1120f : 1024f;
+            var scale = k / camera.Height * camera.Width * 3f / 4f / mapWindow.LargeMapZoom;
+            var firstZ = prev.GetComponent<Render>().Z;
+            var secondZ = point.GetComponent<Render>().Z;
+            var first = screenCenter + MapIcon.DeltaInWorldToMinimapDelta(prev.GridPos - playerPos, diag, scale, (firstZ - posZ) / (9f / mapWindow.LargeMapZoom));
+            var second = screenCenter + MapIcon.DeltaInWorldToMinimapDelta(point.GridPos - playerPos, diag, scale, (secondZ - posZ) / (9f / mapWindow.LargeMapZoom));
+            Graphics.DrawLine(first, second, 2, Settings.OptimalColor);
+        }
+        public void DrawEllipseToWorld(Vector3 vector3Pos, int radius, int points, int lineWidth, Color color)
         {
             var camera = GameController.Game.IngameState.Camera;
 
@@ -725,120 +832,144 @@ namespace ExpeditionIcons
             }
         }
 
-        public void getBestArtifacts()
-        {
-            try
-            {
-                int placements = Int32.Parse(ingameStateIngameUi.GetChildFromIndices(118, 7, 12, 2, 0, 0, 0).Text); //the number of explosives from UI
-                for (int x = 0; x < placements; x++)
-                {
-                    var minX = artifacts.OrderBy(p => p.X).FirstOrDefault();
-                    var maxX = artifacts.OrderBy(p => p.X).LastOrDefault();
-                    var minY = artifacts.OrderBy(p => p.Y).FirstOrDefault();
-                    var maxY = artifacts.OrderBy(p => p.Y).LastOrDefault();
-                    Vector2 minCorner = new Vector2(minX.X, minY.Y);
-                    Vector2 maxCorner = new Vector2(maxX.X, maxY.Y);
-                    List<Vector2> pointsToDelete = new List<Vector2>() { };
-                    Vector2 optimalPoint = new Vector2();
-                    float smallestSum = float.PositiveInfinity;
-                    float smallestDistanceToDetonator = float.PositiveInfinity;
-                    int biggestCount = 0;
-                    for (var i = minCorner.X + 10; i < maxCorner.X; i += 10)
-                    {
-                        for (var j = minCorner.Y + 10; j < maxCorner.Y; j += 10)
-                        {
-                            Vector2 currentCenter = new Vector2(i, j);
-                            List<Vector2> temp = new List<Vector2>() { };
-                            float overallSum = 0;
-                            int currentCount = 0;
-                            foreach (Vector2 artifact in artifacts)
-                            {
-                                float distance = Vector2.Distance(artifact, currentCenter);
-                                if (distance < Settings.ExplosiveRange + 10)
-                                {
-                                    currentCount++;
-                                    overallSum += distance;
-                                    temp.Add(artifact);
-                                }
-                            }
-                            if (currentCount == 1 && smallestDistanceToDetonator > Vector2.Distance(detonator, currentCenter))
-                            {
-                                biggestCount = currentCount;
-                                pointsToDelete = temp;
-                                optimalPoint = currentCenter;
-                                smallestDistanceToDetonator = Vector2.Distance(detonator, currentCenter);
-                            }
-                            else if (currentCount > biggestCount)
-                            {
-                                biggestCount = currentCount;
-                                smallestSum = overallSum / currentCount;
-                                pointsToDelete = temp;
-                                optimalPoint = currentCenter;
-                            }
-                            else if (currentCount == biggestCount && smallestSum > overallSum / currentCount)
-                            {
-                                smallestSum = overallSum / currentCount;
-                                pointsToDelete = temp;
-                                optimalPoint = currentCenter;
-                            }
-                        }
-                    }
-                    efficientCircles.Add(optimalPoint);
-                    if (minCorner == maxCorner)
-                    {
-                        optimalPoint.X = minCorner.X;
-                        optimalPoint.Y = minCorner.Y;
-                        efficientCircles.Add(optimalPoint);
-                        break;
-                    }
-                    artifacts = artifacts.Except(pointsToDelete).ToList();
-                }
-            }
-            catch { }
-        }
+        //public void getBestArtifacts() //using bruteforce, and just finds the positions where there are the most points, so not too useful. Pretty fast though
+        //{
+        //    try
+        //    {
+        //        int placements = Int32.Parse(ingameStateIngameUi.GetChildFromIndices(118, 7, 12, 2, 0, 0, 0).Text); //the number of explosives from UI
+        //        for (int x = 0; x < placements; x++)
+        //        {
+        //            var minX = artifacts.OrderBy(p => p.X).FirstOrDefault();
+        //            var maxX = artifacts.OrderBy(p => p.X).LastOrDefault();
+        //            var minY = artifacts.OrderBy(p => p.Y).FirstOrDefault();
+        //            var maxY = artifacts.OrderBy(p => p.Y).LastOrDefault();
+        //            Vector2 minCorner = new Vector2(minX.X, minY.Y);
+        //            Vector2 maxCorner = new Vector2(maxX.X, maxY.Y);
+        //            List<Vector3> pointsToDelete = new List<Vector3>() { };
+        //            Vector3 optimalPoint = new Vector3();
+        //            float smallestSum = float.PositiveInfinity;
+        //            float smallestDistanceToDetonator = float.PositiveInfinity;
+        //            int biggestCount = 0;
+        //            for (var i = minCorner.X + 10; i < maxCorner.X; i += 10)
+        //            {
+        //                for (var j = minCorner.Y + 10; j < maxCorner.Y; j += 10)
+        //                {
+        //                    Vector3 currentCenter = new Vector3(i, j, 0);
+        //                    List<Vector3> temp = new List<Vector3>() { };
+        //                    float overallSum = 0;
+        //                    int currentCount = 0;
+        //                    foreach (Vector3 artifact in artifacts)
+        //                    {
+        //                        float distance = Vector3.Distance(artifact, currentCenter);
+        //                        if (distance < Settings.ExplosiveRange + 10)
+        //                        {
+        //                            currentCount++;
+        //                            overallSum += distance;
+        //                            temp.Add(artifact);
+        //                        }
+        //                    }
+        //                    if (currentCount == 1 && smallestDistanceToDetonator > Vector3.Distance(detonator, currentCenter))
+        //                    {
+        //                        biggestCount = currentCount;
+        //                        pointsToDelete = temp;
+        //                        currentCenter.Z = temp[0].Z;
+        //                        optimalPoint = currentCenter;
+        //                        smallestDistanceToDetonator = Vector3.Distance(detonator, currentCenter);
+        //                    }
+        //                    else if (currentCount > biggestCount)
+        //                    {
+        //                        biggestCount = currentCount;
+        //                        smallestSum = overallSum / currentCount;
+        //                        pointsToDelete = temp;
+        //                        currentCenter.Z = temp[0].Z;
+        //                        optimalPoint = currentCenter;
+        //                    }
+        //                    else if (currentCount == biggestCount && smallestSum > overallSum / currentCount)
+        //                    {
+        //                        smallestSum = overallSum / currentCount;
+        //                        pointsToDelete = temp;
+        //                        currentCenter.Z = temp[0].Z;
+        //                        optimalPoint = currentCenter;
+        //                    }
+        //                }
+        //            }
+        //            efficientCircles.Add(optimalPoint);
+        //            if (minCorner == maxCorner)
+        //            {
+        //                optimalPoint.X = minCorner.X;
+        //                optimalPoint.Y = minCorner.Y;
+        //                efficientCircles.Add(optimalPoint);
+        //                break;
+        //            }
+        //            artifacts = artifacts.Except(pointsToDelete).ToList();
+        //        }
+        //    }
+        //    catch { }
+        //}
 
-        public void getBestLine(List<Vector2> nodes)
+        // Attempt with all permutations. Takes too long if there are more than 10 nodes and just keeps getting exponentially worse.
+        //public void getBestLine(List<Vector3> nodes)
+        //{
+        //    int placements = Int32.Parse(ingameStateIngameUi.GetChildFromIndices(118, 7, 12, 2, 0, 0, 0).Text); //the number of explosives from UI
+        //    float MaxRange = Settings.ExplosiveDistance * placements;
+        //    int bestCount = 0;
+        //    float shortestDistance = 0;
+        //    List<Vector3> bestLine = new List<Vector3>();
+        //    //vals is a single permutation
+        //    Permutations.ForAllPermutation(nodes.ToArray(), (vals) =>
+        //    {
+        //        float distance = Vector2.Distance((Vector2)detonator, (Vector2)vals[0]);
+        //        int count = 0;
+        //        Vector2 prev = (Vector2)vals[0];
+        //        foreach (var item in vals) //work with coordinate
+        //        {
+        //            float temp = Vector2.Distance(prev, (Vector2)item);
+        //            if (distance + temp < MaxRange)
+        //            {
+        //                count++;
+        //                distance += temp;
+        //            }
+        //            else break;
+        //            prev = (Vector2)item;
+        //        }
+        //        if (count > bestCount)
+        //        {
+        //            bestCount = count;
+        //            bestLine = vals.ToList();
+        //        }
+        //        else if (count == bestCount && distance > shortestDistance)
+        //        {
+        //            shortestDistance = distance;
+        //            bestLine = vals.ToList();
+        //        }
+        //        return false;
+        //    });
+        //    for (int x = 0; x < bestCount; x++)
+        //    {
+        //        efficientLines.Add((Vector2)bestLine[x]);
+        //    }
+
+        //}
+        public void getBestLine(List<Entity> nodes) //Using nearest neighbour. Pretty bad, but is very fast
         {
             int placements = Int32.Parse(ingameStateIngameUi.GetChildFromIndices(118, 7, 12, 2, 0, 0, 0).Text); //the number of explosives from UI
-            float MaxRange = Settings.ExplosiveDistance * placements;
-            int bestCount = 0;
-            float shortestDistance = 0;
-            List<Vector2> bestLine = new List<Vector2>();
-            //vals is a single permutation
-            Permutations.ForAllPermutation(nodes.ToArray(), (vals) =>
+            float maxRange = Settings.ExplosiveDistance * placements;
+            float distance = 0;
+            Entity prev = detonator;
+            while (nodes.Count != 0)
             {
-                float distance = Vector2.Distance(detonator, vals[0]);
-                int count = 0;
-                Vector2 prev = vals[0];
-                foreach (var item in vals) //work with coordinate
+                var closestPoint = nodes.Where(point => point != prev).OrderBy(point => Vector3.Distance(prev.Pos, point.Pos)).First();
+                if (Vector3.Distance(prev.Pos, closestPoint.Pos) + distance < maxRange)
                 {
-                    float temp = Vector2.Distance(prev, item);
-                    if (distance + temp < MaxRange)
-                    {
-                        count++;
-                        distance += temp;
-                    }
-                    else break;
-                    prev = item;
+                    distance += Vector3.Distance(prev.Pos, closestPoint.Pos);
+                    prev = closestPoint;
+                    efficientLines.Add(closestPoint);
+                    nodes.Remove(closestPoint);
                 }
-                if (count > bestCount)
-                {
-                    bestCount = count;
-                    bestLine = vals.ToList();
-                }
-                else if (count == bestCount && distance > shortestDistance)
-                {
-                    shortestDistance = distance;
-                    bestLine = vals.ToList();
-                }
-                return false;
-            });
-            for (int x = 0; x < bestCount; x++)
-            {
-                efficientLines.Add(bestLine[x]);
+                else break;
             }
-
         }
+
 
         private void DrawToLargeMiniMapSquare(StoredEntity entity, MinimapTextInfo info)
         {

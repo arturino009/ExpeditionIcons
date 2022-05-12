@@ -1,4 +1,5 @@
-﻿using ExileCore.Shared.Attributes;
+﻿using System.Windows.Forms;
+using ExileCore.Shared.Attributes;
 using ExileCore.Shared.Interfaces;
 using ExileCore.Shared.Nodes;
 using SharpDX;
@@ -8,11 +9,12 @@ namespace ExpeditionIcons
     public class Settings : ISettings
     {
         public ToggleNode Enable { get; set; } = new ToggleNode(false);
+        public HotkeyNode optimalMap { get; set; } = new HotkeyNode(Keys.F6);
         [Menu("Optimal placement color")]
         public ColorNode OptimalColor { get; set; } = new ColorNode(Color.Yellow);
         [Menu("Highlight runic monsters")]
         public ToggleNode HiglightRunic { get; set; } = new ToggleNode(false);
-        [Menu("Highlight artifact chests")]
+        [Menu("Highlight selected chests")]
         public ToggleNode HiglightArtifact { get; set; } = new ToggleNode(false);
         [Menu("Show chests in minimap")]
         public ToggleNode ShowChests { get; set; } = new ToggleNode(false);
@@ -33,6 +35,10 @@ namespace ExpeditionIcons
         public ToggleNode ShowBasicCurrency { get; set; } = new ToggleNode(true);
         [Menu("Color", parentIndex = 100)]
         public ColorNode BasicColor { get; set; } = new ColorNode(Color.Green);
+        [Menu("Show harbinger", parentIndex = 100)]
+        public ToggleNode ShowHarbinger { get; set; } = new ToggleNode(true);
+        [Menu("Color", parentIndex = 100)]
+        public ColorNode HarbingerColor { get; set; } = new ColorNode(Color.Green);
 
         [Menu("Show stacked decks", parentIndex = 100)]
         public ToggleNode ShowStackedDecks { get; set; } = new ToggleNode(true);
