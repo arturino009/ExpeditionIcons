@@ -232,7 +232,8 @@ namespace ExpeditionIcons
                         (animatedMetaData.Contains("ChestDivinationCards") && Settings.ShowStackedDecks.Value) ||
                         (animatedMetaData.Contains("ChestCurrency") && Settings.ShowBasicCurrency.Value) ||
                         (animatedMetaData.Contains("ChestTrinkets") && Settings.ShowJewellery.Value) ||
-                        (animatedMetaData.Contains("ChestHarbinger") && Settings.ShowHarbinger.Value))
+                        (animatedMetaData.Contains("ChestHarbinger") && Settings.ShowHarbinger.Value) ||
+                        animatedMetaData.Contains("ChestHeist"))
                     {
                         var location = e.Pos;
                         location.Z = 0;
