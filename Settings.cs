@@ -10,6 +10,12 @@ namespace ExpeditionIcons
         public ToggleNode Enable { get; set; } = new ToggleNode(false);
         [Menu("Optimal placement color")]
         public ColorNode OptimalColor { get; set; } = new ColorNode(Color.Yellow);
+        [Menu("Highlight runic monsters")]
+        public ToggleNode HiglightRunic { get; set; } = new ToggleNode(false);
+        [Menu("Highlight artifact chests")]
+        public ToggleNode HiglightArtifact { get; set; } = new ToggleNode(false);
+        [Menu("Show chests in minimap")]
+        public ToggleNode ShowChests { get; set; } = new ToggleNode(false);
         [Menu("Good mods", 100)]
         public EmptyNode SettingsEmptyGood { get; set; }
 
@@ -46,6 +52,14 @@ namespace ExpeditionIcons
         public ToggleNode ShowPacksize { get; set; } = new ToggleNode(true);
         [Menu("Color", parentIndex = 100)]
         public ColorNode PacksizeColor { get; set; } = new ColorNode(Color.Green);
+        [Menu("Show jewellery", parentIndex = 100)]
+        public ToggleNode ShowJewellery { get; set; } = new ToggleNode(true);
+        [Menu("Color", parentIndex = 100)]
+        public ColorNode JewelleryColor { get; set; } = new ColorNode(Color.Green);
+        [Menu("Show influence", parentIndex = 100)]
+        public ToggleNode ShowInfluence { get; set; } = new ToggleNode(true);
+        [Menu("Color", parentIndex = 100)]
+        public ColorNode InfluenceColor { get; set; } = new ColorNode(Color.Green);
 
 
 
@@ -69,11 +83,10 @@ namespace ExpeditionIcons
 
         [Menu("Explosive settings", 102)]
         public EmptyNode SettingsExplosive { get; set; }
-        [Menu("Show explosive range", parentIndex = 102)]
-        public ToggleNode ShowExplosives { get; set; } = new ToggleNode(true);
-        [Menu("Color for explosive range", parentIndex = 102)]
-        public ColorNode ExplosiveColor { get; set; } = new ColorNode(Color.Gray);
-        [Menu("Explosive range (configure manually so it matches ingame)", parentIndex = 102)] 
-        public RangeNode<int> ExplosiveRange { get; set; } = new RangeNode<int>(310, 310, 600);
+        [Menu("Explosive range (Don't change, use the button)", parentIndex = 102)] 
+        public RangeNode<float> ExplosiveRange { get; set; } = new RangeNode<float>(310, 310, 600);
+        [Menu("Explosive distance (Don't change, use the button)", parentIndex = 102)]
+        public RangeNode<float> ExplosiveDistance { get; set; } = new RangeNode<float>(970, 970, 2000);
+
     }
 }
