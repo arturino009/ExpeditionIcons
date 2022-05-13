@@ -608,6 +608,10 @@ namespace ExpeditionIcons
                 {
                     text = text + " " + "Pack ";
                     background = Settings.PacksizeColor;
+                    if (remnants.Contains(e))
+                    {
+                        remnants.Remove(e);
+                    }
                 }
 
                 //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierRareMonsterChance"))))
