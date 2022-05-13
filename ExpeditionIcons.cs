@@ -953,7 +953,19 @@ namespace ExpeditionIcons
         //}
         public void getBestLine(List<Entity> nodes) //Using nearest neighbour. Pretty bad, but is very fast
         {
-            int placements = Int32.Parse(ingameStateIngameUi.GetChildFromIndices(118, 7, 12, 2, 0, 0, 0).Text); //the number of explosives from UI
+            int placements;
+            try
+            {
+                placements = Int32.Parse(ingameStateIngameUi.GetChildFromIndices(118, 7, 12, 2, 0, 0, 0).Text); //the number of explosives from UI
+            }
+            catch
+            {
+                try
+                {
+                    placements = Int32.Parse(ingameStateIngameUi.GetChildFromIndices(117, 7, 12, 2, 0, 0, 0).Text);
+                }
+                catch { placements = 5; }
+            }
             float maxRange = Settings.ExplosiveDistance * placements;
             float distance = 0;
             Entity prev = detonator;
