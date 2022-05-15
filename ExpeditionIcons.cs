@@ -111,86 +111,65 @@ namespace ExpeditionIcons
             remnants.Clear();
             artifacts.Clear();
             explosives.Clear();
+            bool hasDetonator = false;
             foreach (var e in GameController.EntityListWrapper.OnlyValidEntities)
             {
                 if (e.Path == null) continue;
                 if (e.Path.Contains("ExpeditionExplosive") && !e.Path.Contains("Fuse"))
                 {
                     explosives.Add(e);
+                    if (e.GetComponent<Targetable>().isTargetable)
+                    {
+                        hasDetonator = true;
+                    }
                     continue;
                 }
             }
 
-            if (efficientLines.Count != 0)
+            if (hasDetonator)
             {
-                //foreach (var point in efficientPoints)
-                //{
-                //    DrawEllipseToWorld(point, Settings.ExplosiveRange, 50, 4, Settings.OptimalColor);
-                //}
-                Graphics.DrawLine(camera.WorldToScreen(detonator.Pos), camera.WorldToScreen(efficientLines[0].Pos), 3, Settings.OptimalColor);
-                if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
-                    DrawToLargeMiniMapLine(detonator, efficientLines[0]);
-                Entity prev = efficientLines[0];
-                foreach (Entity point in efficientLines)
+                if (efficientLines.Count != 0)
                 {
-                    if (point != efficientLines.First())
+                    //foreach (var point in efficientPoints)
+                    //{
+                    //    DrawEllipseToWorld(point, Settings.ExplosiveRange, 50, 4, Settings.OptimalColor);
+                    //}
+                    Graphics.DrawLine(camera.WorldToScreen(detonator.Pos), camera.WorldToScreen(efficientLines[0].Pos), 3, Settings.OptimalColor);
+                    if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
+                        DrawToLargeMiniMapLine(detonator, efficientLines[0]);
+                    Entity prev = efficientLines[0];
+                    foreach (Entity point in efficientLines)
                     {
-                        Graphics.DrawLine(camera.WorldToScreen(prev.Pos), camera.WorldToScreen(point.Pos), 3, Settings.OptimalColor);
-                        if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
-                            DrawToLargeMiniMapLine(prev, point);
-                        prev = point;
+                        if (point != efficientLines.First())
+                        {
+                            Graphics.DrawLine(camera.WorldToScreen(prev.Pos), camera.WorldToScreen(point.Pos), 3, Settings.OptimalColor);
+                            if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
+                                DrawToLargeMiniMapLine(prev, point);
+                            prev = point;
+                        }
                     }
                 }
-            }
 
-            //GetComponent
-            foreach (var e in GameController.EntityListWrapper.OnlyValidEntities)
-            //foreach (var e in GameController.EntityListWrapper.NotOnlyValidEntities)
-            {
-                if (e.Path == null) continue;
-                // var renderComponent = e?.GetComponent<Render>();
-                // if (renderComponent == null) continue;
-                if (e.Path.Contains("ExpeditionDetonator"))
+                //GetComponent
+                foreach (var e in GameController.EntityListWrapper.OnlyValidEntities)
+                //foreach (var e in GameController.EntityListWrapper.NotOnlyValidEntities)
                 {
-                    detonator = e;
-                    continue;
-                }
-                if (e.Path.Contains("Terrain/Leagues/Expedition/Tiles"))
-                {
-                    var positionedComp = e.GetComponent<Positioned>();
-
-                    var text = "D";
-
-                    artifacts.Add(e);
-
-                    //if (modelPath == null) continue;
-                    //text = text && modelPath.Substring(0, modelPath.IndexOf("."));
-
-                    var TextInfo = new MinimapTextInfo
+                    if (e.Path == null) continue;
+                    // var renderComponent = e?.GetComponent<Render>();
+                    // if (renderComponent == null) continue;
+                    if (e.Path.Contains("ExpeditionDetonator"))
                     {
-                        Text = text,
-                        FontSize = 16,
-                        FontColor = Color.Black,
-                        FontBackgroundColor = Color.Orange,
-                        TextWrapLength = 35
-                    };
-                    var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
-                    if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
-                        DrawToLargeMiniMapText(ent, ent.TextureInfo);
-                    continue;
-                }
-
-                if (e.Path.Contains("ExpeditionMarker"))
-                {
-                    var positionedComp = e.GetComponent<Positioned>();
-                    //var animatedMetaData = e.GetComponent<Animated>().BaseAnimatedObjectEntity.Metadata;
-                    var animatedMetaData = e.GetComponent<Animated>().ReadObjectAt<Entity>(0x1C8).Metadata;
-                    if (animatedMetaData == null) continue;
-
-                    var text = "*";
-                    if (animatedMetaData.Contains("elitemarker") && Settings.HiglightRunic.Value)
+                        detonator = e;
+                        continue;
+                    }
+                    if (e.Path.Contains("Terrain/Leagues/Expedition/Tiles"))
                     {
-                        text = "M";
+                        var positionedComp = e.GetComponent<Positioned>();
+
+                        var text = "D";
+
+                        artifacts.Add(e);
+
                         //if (modelPath == null) continue;
                         //text = text && modelPath.Substring(0, modelPath.IndexOf("."));
 
@@ -198,129 +177,41 @@ namespace ExpeditionIcons
                         {
                             Text = text,
                             FontSize = 16,
-                            FontColor = Color.Yellow,
-                            FontBackgroundColor = Color.Black,
+                            FontColor = Color.Black,
+                            FontBackgroundColor = Color.Orange,
                             TextWrapLength = 35
                         };
-
-                        var location = e.Pos;
-                        location.Z -= 10;
-                        var showElement = true;
-                        foreach (var explosive in explosives)
-                        {
-                            if (Vector3.Distance(explosive.Pos, e.Pos) < Settings.ExplosiveRange + 20)
-                            {
-                                showElement = false;
-                                break;
-                            }
-                        }
-                        if (showElement)
-                        {
-                            DrawEllipseToWorld(location, 12, 15, 8, Color.Red);
-                        }
-
                         var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
-                        if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible && showElement)
-                        {
+                        if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
                             DrawToLargeMiniMapText(ent, ent.TextureInfo);
-                            remnants.Add(e);
-
-                            // Graphics.DrawText(text, textPos, textColor, TextSize, FontAlign.Center);
-                        }
+                        continue;
                     }
-                    if ((animatedMetaData.Contains("ChestLeague") && Settings.ShowArtifact.Value) ||
-                        (animatedMetaData.Contains("ChestDivinationCards") && Settings.ShowStackedDecks.Value) ||
-                        (animatedMetaData.Contains("ChestCurrency") && Settings.ShowBasicCurrency.Value) ||
-                        (animatedMetaData.Contains("ChestTrinkets") && Settings.ShowJewellery.Value) ||
-                        (animatedMetaData.Contains("ChestHarbinger") && Settings.ShowHarbinger.Value) ||
-                        animatedMetaData.Contains("ChestHeist"))
-                    {
-                        var location = e.Pos;
-                        location.Z -= 10;
-                        var showElement = true;
-                        foreach (var explosive in explosives)
-                        {
-                            if (Vector3.Distance(explosive.Pos, e.Pos) < Settings.ExplosiveRange + 20)
-                            {
-                                showElement = false;
-                                break;
-                            }
-                        }
-                        if (showElement && Settings.HiglightArtifact.Value)
-                        {
-                            DrawEllipseToWorld(location, 12, 15, 8, Color.Red);
-                        }
-                        artifacts.Add(e);
-                    }
-                    // if (animatedMetaData.Contains("monstermarker"))
-                    // {
-                    // var background = Color.Orange;
-                    // //if (modelPath == null) continue;
-                    // //text = text && modelPath.Substring(0, modelPath.IndexOf("."));
 
-                    // var TextInfo = new MinimapTextInfo
-                    // {
-                    // Text = text,
-                    // FontSize = 20,
-                    // FontColor = Color.Red,
-                    // FontBackgroundColor = Color.Transparent,
-                    // TextWrapLength = 50
-                    // };
-                    // var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
-                    // if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
-                    // DrawToLargeMiniMapText(ent, ent.TextureInfo);
-                    // }
-                    if (Settings.ShowChests.Value)
+                    if (e.Path.Contains("ExpeditionMarker"))
                     {
-                        if (animatedMetaData.Contains("chestmarker3"))
+                        var positionedComp = e.GetComponent<Positioned>();
+                        //var animatedMetaData = e.GetComponent<Animated>().BaseAnimatedObjectEntity.Metadata;
+                        var animatedMetaData = e.GetComponent<Animated>().ReadObjectAt<Entity>(0x1C8).Metadata;
+                        if (animatedMetaData == null) continue;
+
+                        var text = "*";
+                        if (animatedMetaData.Contains("elitemarker") && Settings.HiglightRunic.Value)
                         {
-                            var background = Color.Orange;
+                            text = "M";
                             //if (modelPath == null) continue;
                             //text = text && modelPath.Substring(0, modelPath.IndexOf("."));
 
                             var TextInfo = new MinimapTextInfo
                             {
                                 Text = text,
-                                FontSize = 20,
-                                FontColor = Color.Orange,
-                                FontBackgroundColor = Color.Orange,
-                                TextWrapLength = 50
-                            };
-
-                            var showElement = true;
-                            foreach (var explosive in explosives)
-                            {
-                                if (Vector3.Distance(explosive.Pos, e.Pos) < Settings.ExplosiveRange + 20)
-                                {
-                                    showElement = false;
-                                    break;
-                                }
-                            }
-                            var location = e.Pos;
-                            location.Z -= 10;
-                            if (showElement && Settings.ShowChests.Value)
-                            {
-                                DrawEllipseToWorld(location, 12, 15, 8, Color.Red);
-                            }
-                            var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
-                            if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible && showElement)
-                                DrawToLargeMiniMapText(ent, ent.TextureInfo);
-                        }
-                        if (animatedMetaData.Contains("chestmarker2"))
-                        {
-                            var background = Color.Orange;
-                            //if (modelPath == null) continue;
-                            //text = text && modelPath.Substring(0, modelPath.IndexOf("."));
-
-                            var TextInfo = new MinimapTextInfo
-                            {
-                                Text = text,
-                                FontSize = 20,
+                                FontSize = 16,
                                 FontColor = Color.Yellow,
-                                FontBackgroundColor = Color.Yellow,
-                                TextWrapLength = 50
+                                FontBackgroundColor = Color.Black,
+                                TextWrapLength = 35
                             };
 
+                            var location = e.Pos;
+                            location.Z -= 10;
                             var showElement = true;
                             foreach (var explosive in explosives)
                             {
@@ -330,30 +221,29 @@ namespace ExpeditionIcons
                                     break;
                                 }
                             }
-                            var location = e.Pos;
-                            location.Z -= 10;
-                            if (showElement && Settings.ShowChests.Value)
+                            if (showElement)
                             {
                                 DrawEllipseToWorld(location, 12, 15, 8, Color.Red);
                             }
+
                             var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
                             if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible && showElement)
+                            {
                                 DrawToLargeMiniMapText(ent, ent.TextureInfo);
+                                remnants.Add(e);
+
+                                // Graphics.DrawText(text, textPos, textColor, TextSize, FontAlign.Center);
+                            }
                         }
-                        if (animatedMetaData.Contains("chestmarker1"))
+                        if ((animatedMetaData.Contains("ChestLeague") && Settings.ShowArtifact.Value) ||
+                            (animatedMetaData.Contains("ChestDivinationCards") && Settings.ShowStackedDecks.Value) ||
+                            (animatedMetaData.Contains("ChestCurrency") && Settings.ShowBasicCurrency.Value) ||
+                            (animatedMetaData.Contains("ChestTrinkets") && Settings.ShowJewellery.Value) ||
+                            (animatedMetaData.Contains("ChestHarbinger") && Settings.ShowHarbinger.Value) ||
+                            animatedMetaData.Contains("ChestHeist"))
                         {
-                            var background = Color.Orange;
-                            //if (modelPath == null) continue;
-                            //text = text && modelPath.Substring(0, modelPath.IndexOf("."));
-
-                            var TextInfo = new MinimapTextInfo
-                            {
-                                Text = text,
-                                FontSize = 20,
-                                FontColor = Color.White,
-                                FontBackgroundColor = Color.White,
-                                TextWrapLength = 50
-                            };
+                            var location = e.Pos;
+                            location.Z -= 10;
                             var showElement = true;
                             foreach (var explosive in explosives)
                             {
@@ -363,422 +253,540 @@ namespace ExpeditionIcons
                                     break;
                                 }
                             }
-                            var location = e.Pos;
-                            location.Z -= 10;
-                            if (showElement && Settings.ShowChests.Value)
+                            if (showElement && Settings.HiglightArtifact.Value)
                             {
                                 DrawEllipseToWorld(location, 12, 15, 8, Color.Red);
                             }
-                            var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
-                            if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible && showElement)
-                                DrawToLargeMiniMapText(ent, ent.TextureInfo);
+                            artifacts.Add(e);
                         }
-                        if (animatedMetaData.Contains("chestmarker_signpost"))
+                        // if (animatedMetaData.Contains("monstermarker"))
+                        // {
+                        // var background = Color.Orange;
+                        // //if (modelPath == null) continue;
+                        // //text = text && modelPath.Substring(0, modelPath.IndexOf("."));
+
+                        // var TextInfo = new MinimapTextInfo
+                        // {
+                        // Text = text,
+                        // FontSize = 20,
+                        // FontColor = Color.Red,
+                        // FontBackgroundColor = Color.Transparent,
+                        // TextWrapLength = 50
+                        // };
+                        // var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
+                        // if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
+                        // DrawToLargeMiniMapText(ent, ent.TextureInfo);
+                        // }
+                        if (Settings.ShowChests.Value)
                         {
-                            var background = Color.Orange;
-                            //if (modelPath == null) continue;
-                            //text = text && modelPath.Substring(0, modelPath.IndexOf("."));
-
-                            var TextInfo = new MinimapTextInfo
+                            if (animatedMetaData.Contains("chestmarker3"))
                             {
-                                Text = text,
-                                FontSize = 20,
-                                FontColor = Color.White,
-                                FontBackgroundColor = Color.White,
-                                TextWrapLength = 50
-                            };
+                                var background = Color.Orange;
+                                //if (modelPath == null) continue;
+                                //text = text && modelPath.Substring(0, modelPath.IndexOf("."));
 
-                            var showElement = true;
-                            foreach (var explosive in explosives)
-                            {
-                                if (Vector3.Distance(explosive.Pos, e.Pos) < Settings.ExplosiveRange + 20)
+                                var TextInfo = new MinimapTextInfo
                                 {
-                                    showElement = false;
-                                    break;
+                                    Text = text,
+                                    FontSize = 20,
+                                    FontColor = Color.Orange,
+                                    FontBackgroundColor = Color.Orange,
+                                    TextWrapLength = 50
+                                };
+
+                                var showElement = true;
+                                foreach (var explosive in explosives)
+                                {
+                                    if (Vector3.Distance(explosive.Pos, e.Pos) < Settings.ExplosiveRange + 20)
+                                    {
+                                        showElement = false;
+                                        break;
+                                    }
                                 }
+                                var location = e.Pos;
+                                location.Z -= 10;
+                                if (showElement && Settings.ShowChests.Value)
+                                {
+                                    DrawEllipseToWorld(location, 12, 15, 8, Color.Red);
+                                }
+                                var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
+                                if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible && showElement)
+                                    DrawToLargeMiniMapText(ent, ent.TextureInfo);
                             }
-                            var location = e.Pos;
-                            location.Z -= 10;
-                            if (showElement && Settings.ShowChests.Value)
+                            if (animatedMetaData.Contains("chestmarker2"))
                             {
-                                DrawEllipseToWorld(location, 12, 15, 8, Color.Red);
+                                var background = Color.Orange;
+                                //if (modelPath == null) continue;
+                                //text = text && modelPath.Substring(0, modelPath.IndexOf("."));
+
+                                var TextInfo = new MinimapTextInfo
+                                {
+                                    Text = text,
+                                    FontSize = 20,
+                                    FontColor = Color.Yellow,
+                                    FontBackgroundColor = Color.Yellow,
+                                    TextWrapLength = 50
+                                };
+
+                                var showElement = true;
+                                foreach (var explosive in explosives)
+                                {
+                                    if (Vector3.Distance(explosive.Pos, e.Pos) < Settings.ExplosiveRange + 20)
+                                    {
+                                        showElement = false;
+                                        break;
+                                    }
+                                }
+                                var location = e.Pos;
+                                location.Z -= 10;
+                                if (showElement && Settings.ShowChests.Value)
+                                {
+                                    DrawEllipseToWorld(location, 12, 15, 8, Color.Red);
+                                }
+                                var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
+                                if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible && showElement)
+                                    DrawToLargeMiniMapText(ent, ent.TextureInfo);
                             }
-                            var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
-                            if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible && showElement)
-                                DrawToLargeMiniMapText(ent, ent.TextureInfo);
+                            if (animatedMetaData.Contains("chestmarker1"))
+                            {
+                                var background = Color.Orange;
+                                //if (modelPath == null) continue;
+                                //text = text && modelPath.Substring(0, modelPath.IndexOf("."));
+
+                                var TextInfo = new MinimapTextInfo
+                                {
+                                    Text = text,
+                                    FontSize = 20,
+                                    FontColor = Color.White,
+                                    FontBackgroundColor = Color.White,
+                                    TextWrapLength = 50
+                                };
+                                var showElement = true;
+                                foreach (var explosive in explosives)
+                                {
+                                    if (Vector3.Distance(explosive.Pos, e.Pos) < Settings.ExplosiveRange + 20)
+                                    {
+                                        showElement = false;
+                                        break;
+                                    }
+                                }
+                                var location = e.Pos;
+                                location.Z -= 10;
+                                if (showElement && Settings.ShowChests.Value)
+                                {
+                                    DrawEllipseToWorld(location, 12, 15, 8, Color.Red);
+                                }
+                                var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
+                                if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible && showElement)
+                                    DrawToLargeMiniMapText(ent, ent.TextureInfo);
+                            }
+                            if (animatedMetaData.Contains("chestmarker_signpost"))
+                            {
+                                var background = Color.Orange;
+                                //if (modelPath == null) continue;
+                                //text = text && modelPath.Substring(0, modelPath.IndexOf("."));
+
+                                var TextInfo = new MinimapTextInfo
+                                {
+                                    Text = text,
+                                    FontSize = 20,
+                                    FontColor = Color.White,
+                                    FontBackgroundColor = Color.White,
+                                    TextWrapLength = 50
+                                };
+
+                                var showElement = true;
+                                foreach (var explosive in explosives)
+                                {
+                                    if (Vector3.Distance(explosive.Pos, e.Pos) < Settings.ExplosiveRange + 20)
+                                    {
+                                        showElement = false;
+                                        break;
+                                    }
+                                }
+                                var location = e.Pos;
+                                location.Z -= 10;
+                                if (showElement && Settings.ShowChests.Value)
+                                {
+                                    DrawEllipseToWorld(location, 12, 15, 8, Color.Red);
+                                }
+                                var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
+                                if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible && showElement)
+                                    DrawToLargeMiniMapText(ent, ent.TextureInfo);
+                            }
                         }
                     }
                 }
-            }
 
-            foreach (var e in GameController.EntityListWrapper.ValidEntitiesByType[EntityType.IngameIcon])
-            //foreach (var e in GameController.EntityListWrapper.NotOnlyValidEntities)
-            {
-                var renderComponent = e?.GetComponent<Render>();
-                if (renderComponent == null) continue;
-                var expeditionChestComponent = e?.GetComponent<ObjectMagicProperties>();
-                if (expeditionChestComponent == null) continue;
-                var mods = expeditionChestComponent.Mods;
-                if (!mods.Any(x => x.Contains("ExpeditionRelicModifier"))) continue;
-                var positionedComp = e.GetComponent<Positioned>();
-                var text = "";
-                var background = Color.Green;
-                var location = e.Pos;
-                location.Z -= 10;
-                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionLogbookQuantityChest"))) && Settings.ShowLogbooks.Value)
+                foreach (var e in GameController.EntityListWrapper.ValidEntitiesByType[EntityType.IngameIcon])
+                //foreach (var e in GameController.EntityListWrapper.NotOnlyValidEntities)
                 {
-                    text = text + " " + "Log che";
-                    background = Settings.LogbookColor;
-                    if (!artifacts.Contains(e))
+                    var renderComponent = e?.GetComponent<Render>();
+                    if (renderComponent == null) continue;
+                    var expeditionChestComponent = e?.GetComponent<ObjectMagicProperties>();
+                    if (expeditionChestComponent == null) continue;
+                    var mods = expeditionChestComponent.Mods;
+                    if (!mods.Any(x => x.Contains("ExpeditionRelicModifier"))) continue;
+                    var positionedComp = e.GetComponent<Positioned>();
+                    var text = "";
+                    var background = Color.Green;
+                    var location = e.Pos;
+                    location.Z -= 10;
+                    if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionLogbookQuantityChest"))) && Settings.ShowLogbooks.Value)
                     {
-                        artifacts.Add(e);
+                        text = text + " " + "Log che";
+                        background = Settings.LogbookColor;
+                        if (!artifacts.Contains(e))
+                        {
+                            artifacts.Add(e);
+                        }
                     }
-                }
-                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionLogbookQuantityMonster"))) && Settings.ShowLogbooks.Value)
-                {
-                    text = text + " " + "Log mon";
-                    background = Settings.LogbookColor;
-                    if (!remnants.Contains(e))
+                    if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionLogbookQuantityMonster"))) && Settings.ShowLogbooks.Value)
                     {
-                        remnants.Add(e);
+                        text = text + " " + "Log mon";
+                        background = Settings.LogbookColor;
+                        if (!remnants.Contains(e))
+                        {
+                            remnants.Add(e);
+                        }
                     }
-                }
 
-                //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierLegionSplintersElite"))) || 
-                //(mods.Any(x => x.Contains("ExpeditionRelicModifierEternalEmpireLegionElite"))))
-                //            {
-                //                text = text + " " +"Leg Mon";
-                //                background = Settings.BasicColor;
-                //            }
-                //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierLegionSplintersChest")))|| 
-                //(mods.Any(x => x.Contains("ExpeditionRelicModifierEternalEmpireLegionChest"))))
-                //            {
-                //                text = text + " " + "Leg Che";
-                //                background = Settings.BasicColor;
-                //            }
-                //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionUniqueElite"))) || 
-                //(mods.Any(x => x.Contains("ExpeditionRelicModifierLostMenUniqueElite"))))
-                //            {
-                //                text = text + " " +"Uniq Mon";
-                //                background = Color.Orange;
-                //            }
-                //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionUniqueChest")))|| 
-                //(mods.Any(x => x.Contains("ExpeditionRelicModifierLostMenUniqueChest"))))
-                //            {
-                //                text = text + " " + "Uniq Che";
-                //                background = Color.Orange;
-                //            }
-                //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierEssencesElite"))) || 
-                //(mods.Any(x => x.Contains("ExpeditionRelicModifierLostMenEssenceElite"))))
-                //            {
-                //                text = text + " " + "Ess Mon";
-                //                background = Settings.BasicColor;
-                //            }
-                //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierLostMenEssenceChest")))|| 
-                //(mods.Any(x => x.Contains("ExpeditionRelicModifierEssencesChest"))))
-                //            {
-                //                text = text + " " + "Ess Che";
-                //                background = Settings.BasicColor;
-                //            }
+                    //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierLegionSplintersElite"))) || 
+                    //(mods.Any(x => x.Contains("ExpeditionRelicModifierEternalEmpireLegionElite"))))
+                    //            {
+                    //                text = text + " " +"Leg Mon";
+                    //                background = Settings.BasicColor;
+                    //            }
+                    //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierLegionSplintersChest")))|| 
+                    //(mods.Any(x => x.Contains("ExpeditionRelicModifierEternalEmpireLegionChest"))))
+                    //            {
+                    //                text = text + " " + "Leg Che";
+                    //                background = Settings.BasicColor;
+                    //            }
+                    //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionUniqueElite"))) || 
+                    //(mods.Any(x => x.Contains("ExpeditionRelicModifierLostMenUniqueElite"))))
+                    //            {
+                    //                text = text + " " +"Uniq Mon";
+                    //                background = Color.Orange;
+                    //            }
+                    //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionUniqueChest")))|| 
+                    //(mods.Any(x => x.Contains("ExpeditionRelicModifierLostMenUniqueChest"))))
+                    //            {
+                    //                text = text + " " + "Uniq Che";
+                    //                background = Color.Orange;
+                    //            }
+                    //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierEssencesElite"))) || 
+                    //(mods.Any(x => x.Contains("ExpeditionRelicModifierLostMenEssenceElite"))))
+                    //            {
+                    //                text = text + " " + "Ess Mon";
+                    //                background = Settings.BasicColor;
+                    //            }
+                    //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierLostMenEssenceChest")))|| 
+                    //(mods.Any(x => x.Contains("ExpeditionRelicModifierEssencesChest"))))
+                    //            {
+                    //                text = text + " " + "Ess Che";
+                    //                background = Settings.BasicColor;
+                    //            }
 
-                //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierVaalGemsElite"))) || 
-                //(mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionGemsElite"))))
-                //            {
-                //                text = text + " " + "Gem Mon";
-                //                background = Settings.BasicColor;
-                //            }
-                //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierVaalGemsChest")))|| 
-                //(mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionGemsChest"))))
-                //            {
-                //                text = text + " " + "Gem Che";
-                //                background = Settings.BasicColor;
-                //            }
+                    //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierVaalGemsElite"))) || 
+                    //(mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionGemsElite"))))
+                    //            {
+                    //                text = text + " " + "Gem Mon";
+                    //                background = Settings.BasicColor;
+                    //            }
+                    //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierVaalGemsChest")))|| 
+                    //(mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionGemsChest"))))
+                    //            {
+                    //                text = text + " " + "Gem Che";
+                    //                background = Settings.BasicColor;
+                    //            }
 
-                if ((mods.Any(x => x.Contains("Metadata/Terrain/Doodads/Leagues/Expedition/ChestMarkers"))))
-                {
-                    text = " c ";
-                    background = Settings.BasicColor;
-                }
-                if ((mods.Any(x => x.Contains("Metadata/Terrain/Doodads/Leagues/Expedition/monstermarker_set"))))
-                {
-                    text = " . ";
-                    background = Color.Red;
-                }
-                if ((mods.Any(x => x.Contains("Metadata/Terrain/Doodads/Leagues/Expedition/elitemarker_set"))))
-                {
-                    text = " * ";
-                    background = Color.Yellow;
-                }
-                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionRareTrinketElite"))) && Settings.ShowJewellery.Value)
-                {
-                    text = text + " " + "J Mon";
-                    background = Settings.JewelleryColor;
-                    if (!remnants.Contains(e))
+                    if ((mods.Any(x => x.Contains("Metadata/Terrain/Doodads/Leagues/Expedition/ChestMarkers"))))
                     {
-                        remnants.Add(e);
+                        text = " c ";
+                        background = Settings.BasicColor;
                     }
-                }
-                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionRareTrinketChest"))) && Settings.ShowJewellery.Value)
-                {
-                    text = text + " " + "J Che";
-                    background = Settings.JewelleryColor;
-                    if (!artifacts.Contains(e))
+                    if ((mods.Any(x => x.Contains("Metadata/Terrain/Doodads/Leagues/Expedition/monstermarker_set"))))
                     {
-                        artifacts.Add(e);
+                        text = " . ";
+                        background = Color.Red;
                     }
-                }
-                //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierEternalEmpireEnchantElite"))))
-                //            {
-                //                text = text + " " +"Ench Mon";
-                //                background = Settings.BasicColor;
-                //            }
-                //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierEternalEmpireEnchantChest"))))
-                //            {
-                //                text = text + " " +"Ench Che";
-                //                background = Settings.BasicColor;
-                //            }
-                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierSirensScarabElite"))))
-                {
-                    text = text + " " + "Scarab Mon";
-                    background = Color.Purple;
-                    if (!remnants.Contains(e))
+                    if ((mods.Any(x => x.Contains("Metadata/Terrain/Doodads/Leagues/Expedition/elitemarker_set"))))
                     {
-                        remnants.Add(e);
+                        text = " * ";
+                        background = Color.Yellow;
                     }
-                }
-                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierSirensScarabChest"))))
-                {
-                    text = text + " " + "Scarab Che";
-                    background = Color.Purple;
-                    if (!artifacts.Contains(e))
+                    if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionRareTrinketElite"))) && Settings.ShowJewellery.Value)
                     {
-                        artifacts.Add(e);
+                        text = text + " " + "J Mon";
+                        background = Settings.JewelleryColor;
+                        if (!remnants.Contains(e))
+                        {
+                            remnants.Add(e);
+                        }
                     }
-                }
+                    if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionRareTrinketChest"))) && Settings.ShowJewellery.Value)
+                    {
+                        text = text + " " + "J Che";
+                        background = Settings.JewelleryColor;
+                        if (!artifacts.Contains(e))
+                        {
+                            artifacts.Add(e);
+                        }
+                    }
+                    //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierEternalEmpireEnchantElite"))))
+                    //            {
+                    //                text = text + " " +"Ench Mon";
+                    //                background = Settings.BasicColor;
+                    //            }
+                    //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierEternalEmpireEnchantChest"))))
+                    //            {
+                    //                text = text + " " +"Ench Che";
+                    //                background = Settings.BasicColor;
+                    //            }
+                    if ((mods.Any(x => x.Contains("ExpeditionRelicModifierSirensScarabElite"))))
+                    {
+                        text = text + " " + "Scarab Mon";
+                        background = Color.Purple;
+                        if (!remnants.Contains(e))
+                        {
+                            remnants.Add(e);
+                        }
+                    }
+                    if ((mods.Any(x => x.Contains("ExpeditionRelicModifierSirensScarabChest"))))
+                    {
+                        text = text + " " + "Scarab Che";
+                        background = Color.Purple;
+                        if (!artifacts.Contains(e))
+                        {
+                            artifacts.Add(e);
+                        }
+                    }
 
-                //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierBreachSplintersElite"))) || 
-                //(mods.Any(x => x.Contains("ExpeditionRelicModifierSirensBreachElite"))))
-                //            {
-                //                text = text + " " + "Breach Mon";
-                //                background = Color.Purple;
-                //            }
-                //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierBreachSplintersChest")))|| 
-                //(mods.Any(x => x.Contains("ExpeditionRelicModifierSirensBreachChest"))))
-                //            {
-                //                text = text + " " + "Breach Che";
-                //                background = Color.Purple;
-                //            }
+                    //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierBreachSplintersElite"))) || 
+                    //(mods.Any(x => x.Contains("ExpeditionRelicModifierSirensBreachElite"))))
+                    //            {
+                    //                text = text + " " + "Breach Mon";
+                    //                background = Color.Purple;
+                    //            }
+                    //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierBreachSplintersChest")))|| 
+                    //(mods.Any(x => x.Contains("ExpeditionRelicModifierSirensBreachChest"))))
+                    //            {
+                    //                text = text + " " + "Breach Che";
+                    //                background = Color.Purple;
+                    //            }
 
-                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionInfluencedItemsElite"))) && Settings.ShowInfluence.Value)
-                {
-                    text = text + " " + "Infl Mon";
-                    background = Settings.InfluenceColor;
-                    if (!remnants.Contains(e))
+                    if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionInfluencedItemsElite"))) && Settings.ShowInfluence.Value)
                     {
-                        remnants.Add(e);
+                        text = text + " " + "Infl Mon";
+                        background = Settings.InfluenceColor;
+                        if (!remnants.Contains(e))
+                        {
+                            remnants.Add(e);
+                        }
                     }
-                }
-                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionInfluencedtemsChest"))) && Settings.ShowInfluence.Value)
-                {
-                    text = text + " " + "Infl Che";
-                    background = Settings.InfluenceColor;
-                    if (!artifacts.Contains(e))
+                    if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionInfluencedtemsChest"))) && Settings.ShowInfluence.Value)
                     {
-                        artifacts.Add(e);
+                        text = text + " " + "Infl Che";
+                        background = Settings.InfluenceColor;
+                        if (!artifacts.Contains(e))
+                        {
+                            artifacts.Add(e);
+                        }
                     }
-                }
 
-                //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionMapsElite"))))
-                //            {
-                //                text = text + " " +"Map Mon";
-                //                background = Color.Purple;
-                //            }
-                //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionMapsChest"))))
-                //            {
-                //                text = text + " " +"Map Che";
-                //                background = Color.Purple;
-                //            }
-                //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionFracturedItemsElite"))))
-                //            {
-                //                text = text + " " +"Frac Mon";
-                //                background = Color.Purple;
-                //            }
-                //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionFracturedItemsChest"))))
-                //            {
-                //                text = text + " " +"Frac Che";
-                //                background = Color.Purple;
-                //            }
+                    //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionMapsElite"))))
+                    //            {
+                    //                text = text + " " +"Map Mon";
+                    //                background = Color.Purple;
+                    //            }
+                    //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionMapsChest"))))
+                    //            {
+                    //                text = text + " " +"Map Che";
+                    //                background = Color.Purple;
+                    //            }
+                    //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionFracturedItemsElite"))))
+                    //            {
+                    //                text = text + " " +"Frac Mon";
+                    //                background = Color.Purple;
+                    //            }
+                    //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionFracturedItemsChest"))))
+                    //            {
+                    //                text = text + " " +"Frac Che";
+                    //                background = Color.Purple;
+                    //            }
 
-                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierHarbingerCurrencyElite"))) && Settings.ShowHarbinger.Value)
-                {
-                    text = text + " " + "Harb Mon";
-                    background = Settings.HarbingerColor;
-                    if (!remnants.Contains(e))
+                    if ((mods.Any(x => x.Contains("ExpeditionRelicModifierHarbingerCurrencyElite"))) && Settings.ShowHarbinger.Value)
                     {
-                        remnants.Add(e);
+                        text = text + " " + "Harb Mon";
+                        background = Settings.HarbingerColor;
+                        if (!remnants.Contains(e))
+                        {
+                            remnants.Add(e);
+                        }
                     }
-                }
-                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierHarbingerCurrencyChest"))) && Settings.ShowHarbinger.Value)
-                {
-                    text = text + " " + "Harb Che";
-                    background = Settings.HarbingerColor;
-                    if (!artifacts.Contains(e))
+                    if ((mods.Any(x => x.Contains("ExpeditionRelicModifierHarbingerCurrencyChest"))) && Settings.ShowHarbinger.Value)
                     {
-                        artifacts.Add(e);
+                        text = text + " " + "Harb Che";
+                        background = Settings.HarbingerColor;
+                        if (!artifacts.Contains(e))
+                        {
+                            artifacts.Add(e);
+                        }
                     }
-                }
-                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierPackSize"))) && Settings.ShowPacksize.Value)
-                {
-                    text = text + " " + "Pack ";
-                    background = Settings.PacksizeColor;
-                    if (!remnants.Contains(e))
+                    if ((mods.Any(x => x.Contains("ExpeditionRelicModifierPackSize"))) && Settings.ShowPacksize.Value)
                     {
-                        remnants.Add(e);
+                        text = text + " " + "Pack ";
+                        background = Settings.PacksizeColor;
+                        if (!remnants.Contains(e))
+                        {
+                            remnants.Add(e);
+                        }
                     }
-                }
 
-                //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierRareMonsterChance"))))
-                //            {
-                //                text = text + " " +"Rare";
-                //                background = Settings.DoubleColor;
-                //            }
+                    //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierRareMonsterChance"))))
+                    //            {
+                    //                text = text + " " +"Rare";
+                    //                background = Settings.DoubleColor;
+                    //            }
 
-                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionCurrencyQuantityChest"))) && Settings.ShowArtifact.Value)
-                {
-                    text = text + " " + "Art che";
-                    background = Settings.ArtifactColor;
-                    if (!artifacts.Contains(e))
+                    if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionCurrencyQuantityChest"))) && Settings.ShowArtifact.Value)
                     {
-                        artifacts.Add(e);
+                        text = text + " " + "Art che";
+                        background = Settings.ArtifactColor;
+                        if (!artifacts.Contains(e))
+                        {
+                            artifacts.Add(e);
+                        }
                     }
-                }
 
-                if ((
-                    mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionCurrencyQuantityMonster"))) && Settings.ShowArtifact.Value)
-                {
-                    text = text + " " + "Art mon";
-                    background = Settings.ArtifactColor;
-                    if (!remnants.Contains(e))
+                    if ((
+                        mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionCurrencyQuantityMonster"))) && Settings.ShowArtifact.Value)
                     {
-                        remnants.Add(e);
+                        text = text + " " + "Art mon";
+                        background = Settings.ArtifactColor;
+                        if (!remnants.Contains(e))
+                        {
+                            remnants.Add(e);
+                        }
                     }
-                }
 
-                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierItemQuantityChest"))) && Settings.ShowQuant.Value)
-                {
-                    text = text + " " + "Quant che";
-                    background = Settings.QuantColor;
-                    if (!artifacts.Contains(e))
+                    if ((mods.Any(x => x.Contains("ExpeditionRelicModifierItemQuantityChest"))) && Settings.ShowQuant.Value)
                     {
-                        artifacts.Add(e);
+                        text = text + " " + "Quant che";
+                        background = Settings.QuantColor;
+                        if (!artifacts.Contains(e))
+                        {
+                            artifacts.Add(e);
+                        }
                     }
-                }
-                if ((
-                    mods.Any(x => x.Contains("ExpeditionRelicModifierItemQuantityMonster"))) && Settings.ShowQuant.Value)
-                {
-                    text = text + " " + "Quant mon";
-                    background = Settings.QuantColor;
-                    if (!remnants.Contains(e))
+                    if ((
+                        mods.Any(x => x.Contains("ExpeditionRelicModifierItemQuantityMonster"))) && Settings.ShowQuant.Value)
                     {
-                        remnants.Add(e);
+                        text = text + " " + "Quant mon";
+                        background = Settings.QuantColor;
+                        if (!remnants.Contains(e))
+                        {
+                            remnants.Add(e);
+                        }
                     }
-                }
 
-                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionBasicCurrencyChest"))) && Settings.ShowBasicCurrency.Value)
-                {
-                    text = text + " " + "Curr che";
-                    background = Settings.BasicColor;
-                    if (!artifacts.Contains(e))
+                    if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionBasicCurrencyChest"))) && Settings.ShowBasicCurrency.Value)
                     {
-                        artifacts.Add(e);
+                        text = text + " " + "Curr che";
+                        background = Settings.BasicColor;
+                        if (!artifacts.Contains(e))
+                        {
+                            artifacts.Add(e);
+                        }
                     }
-                }
-                if ((
-                    mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionBasicCurrencyElite"))) && Settings.ShowBasicCurrency.Value)
-                {
-                    text = text + " " + "Curr mon";
-                    background = Settings.BasicColor;
-                    if (!remnants.Contains(e))
+                    if ((
+                        mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionBasicCurrencyElite"))) && Settings.ShowBasicCurrency.Value)
                     {
-                        remnants.Add(e);
+                        text = text + " " + "Curr mon";
+                        background = Settings.BasicColor;
+                        if (!remnants.Contains(e))
+                        {
+                            remnants.Add(e);
+                        }
                     }
-                }
-                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierStackedDeckChest"))) && Settings.ShowStackedDecks.Value)
-                {
-                    text = text + " " + "Deck che";
-                    background = Settings.StackedColor;
-                    if (!artifacts.Contains(e))
+                    if ((mods.Any(x => x.Contains("ExpeditionRelicModifierStackedDeckChest"))) && Settings.ShowStackedDecks.Value)
                     {
-                        artifacts.Add(e);
+                        text = text + " " + "Deck che";
+                        background = Settings.StackedColor;
+                        if (!artifacts.Contains(e))
+                        {
+                            artifacts.Add(e);
+                        }
                     }
-                }
-                if ((
-                    mods.Any(x => x.Contains("ExpeditionRelicModifierStackedDeckElite"))) && Settings.ShowStackedDecks.Value)
-                {
-                    text = text + " " + "Deck mon";
-                    background = Settings.StackedColor;
-                    if (!remnants.Contains(e))
+                    if ((
+                        mods.Any(x => x.Contains("ExpeditionRelicModifierStackedDeckElite"))) && Settings.ShowStackedDecks.Value)
                     {
-                        remnants.Add(e);
+                        text = text + " " + "Deck mon";
+                        background = Settings.StackedColor;
+                        if (!remnants.Contains(e))
+                        {
+                            remnants.Add(e);
+                        }
                     }
-                }
-                if (mods.Any(x => x.Contains("ExpeditionRelicModifierElitesDuplicated")) && Settings.ShowDouble.Value)
-                {
-                    text = text + " " + "POG*2";
-                    background = Settings.DoubleColor;
-                    if (!remnants.Contains(e))
+                    if (mods.Any(x => x.Contains("ExpeditionRelicModifierElitesDuplicated")) && Settings.ShowDouble.Value)
                     {
-                        remnants.Add(e);
+                        text = text + " " + "POG*2";
+                        background = Settings.DoubleColor;
+                        if (!remnants.Contains(e))
+                        {
+                            remnants.Add(e);
+                        }
+                        if (!artifacts.Contains(e))
+                        {
+                            artifacts.Add(e);
+                        }
                     }
-                    if (!artifacts.Contains(e))
-                    {
-                        artifacts.Add(e);
-                    }
-                }
 
-                if ((mods.Any(x => x.Contains("ExpeditionRelicModifierImmunePhysicalDamage")) && Settings.PhysImmune.Value) ||
-                    (mods.Any(x => x.Contains("ExpeditionRelicModifierImmuneFireDamage")) && Settings.FireImmune.Value) ||
-                    (mods.Any(x => x.Contains("ExpeditionRelicModifierImmuneColdDamage")) && Settings.ColdImmune.Value) ||
-                    (mods.Any(x => x.Contains("ExpeditionRelicModifierImmuneLightningDamage")) && Settings.LightningImmune.Value) ||
-                    (mods.Any(x => x.Contains("ExpeditionRelicModifierImmuneChaosDamage")) && Settings.ChaosImmune.Value) ||
-                    (mods.Any(x => x.Contains("ExpeditionRelicModifierCannotBeCrit")) && Settings.CritImmune.Value) || (mods.Any(x => x.Contains("ExpeditionRelicModifierImmuneStatusAilments")) && Settings.FireImmune.Value))
+                    if ((mods.Any(x => x.Contains("ExpeditionRelicModifierImmunePhysicalDamage")) && Settings.PhysImmune.Value) ||
+                        (mods.Any(x => x.Contains("ExpeditionRelicModifierImmuneFireDamage")) && Settings.FireImmune.Value) ||
+                        (mods.Any(x => x.Contains("ExpeditionRelicModifierImmuneColdDamage")) && Settings.ColdImmune.Value) ||
+                        (mods.Any(x => x.Contains("ExpeditionRelicModifierImmuneLightningDamage")) && Settings.LightningImmune.Value) ||
+                        (mods.Any(x => x.Contains("ExpeditionRelicModifierImmuneChaosDamage")) && Settings.ChaosImmune.Value) ||
+                        (mods.Any(x => x.Contains("ExpeditionRelicModifierCannotBeCrit")) && Settings.CritImmune.Value) || (mods.Any(x => x.Contains("ExpeditionRelicModifierImmuneStatusAilments")) && Settings.FireImmune.Value))
 
-                {
-                    text = "WARN";
-                    background = Settings.ImmuneColor;
-                    if (remnants.Contains(e))
                     {
-                        remnants.Remove(e);
+                        text = "WARN";
+                        background = Settings.ImmuneColor;
+                        if (remnants.Contains(e))
+                        {
+                            remnants.Remove(e);
+                        }
+                        if (artifacts.Contains(e))
+                        {
+                            artifacts.Remove(e);
+                        }
                     }
-                    if (artifacts.Contains(e))
+
+                    if (text == "") continue;
+
+                    var TextInfo = new MinimapTextInfo
                     {
-                        artifacts.Remove(e);
+                        Text = text,
+                        FontSize = 10,
+                        FontColor = Color.White,
+                        FontBackgroundColor = background,
+                        TextWrapLength = 50
+                    };
+
+                    var showElement = true;
+                    foreach (var explosive in explosives)
+                    {
+                        if (Vector3.Distance(explosive.Pos, e.Pos) < Settings.ExplosiveRange + 20)
+                        {
+                            showElement = false;
+                            break;
+                        }
                     }
+                    var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
+                    if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible && showElement)
+                        DrawToLargeMiniMapText(ent, ent.TextureInfo);
                 }
-
-                if (text == "") continue;
-
-                var TextInfo = new MinimapTextInfo
-                {
-                    Text = text,
-                    FontSize = 10,
-                    FontColor = Color.White,
-                    FontBackgroundColor = background,
-                    TextWrapLength = 50
-                };
-
-                var showElement = true;
-                foreach (var explosive in explosives)
-                {
-                    if (Vector3.Distance(explosive.Pos, e.Pos) < Settings.ExplosiveRange + 20)
-                    {
-                        showElement = false;
-                        break;
-                    }
-                }
-                var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
-                if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible && showElement)
-                    DrawToLargeMiniMapText(ent, ent.TextureInfo);
             }
         }
 
