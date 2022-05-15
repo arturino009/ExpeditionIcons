@@ -111,16 +111,16 @@ namespace ExpeditionIcons
             remnants.Clear();
             artifacts.Clear();
             explosives.Clear();
-            bool hasDetonator = false;
+            bool usedDetonator = false;
             foreach (var e in GameController.EntityListWrapper.OnlyValidEntities)
             {
                 if (e.Path == null) continue;
                 if (e.Path.Contains("ExpeditionDetonator"))
                 {
                     detonator = e;
-                    if (e.GetComponent<Targetable>().isTargetable)
+                    if (!e.GetComponent<Targetable>().isTargetable)
                     {
-                        hasDetonator = true;
+                        usedDetonator = true;
                     }
                     continue;
                 }
@@ -129,7 +129,7 @@ namespace ExpeditionIcons
                     explosives.Add(e);
                 }
             }
-            if (hasDetonator)
+            if (!usedDetonator)
             {
                 if (efficientLines.Count != 0)
                 {
