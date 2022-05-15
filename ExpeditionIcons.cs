@@ -115,17 +115,20 @@ namespace ExpeditionIcons
             foreach (var e in GameController.EntityListWrapper.OnlyValidEntities)
             {
                 if (e.Path == null) continue;
-                if (e.Path.Contains("ExpeditionExplosive") && !e.Path.Contains("Fuse"))
+                if (e.Path.Contains("ExpeditionDetonator"))
                 {
-                    explosives.Add(e);
+                    detonator = e;
                     if (e.GetComponent<Targetable>().isTargetable)
                     {
                         hasDetonator = true;
                     }
                     continue;
                 }
+                if (e.Path.Contains("ExpeditionExplosive") && !e.Path.Contains("Fuse"))
+                {
+                    explosives.Add(e);
+                }
             }
-
             if (hasDetonator)
             {
                 if (efficientLines.Count != 0)
@@ -157,11 +160,7 @@ namespace ExpeditionIcons
                     if (e.Path == null) continue;
                     // var renderComponent = e?.GetComponent<Render>();
                     // if (renderComponent == null) continue;
-                    if (e.Path.Contains("ExpeditionDetonator"))
-                    {
-                        detonator = e;
-                        continue;
-                    }
+
                     if (e.Path.Contains("Terrain/Leagues/Expedition/Tiles"))
                     {
                         var positionedComp = e.GetComponent<Positioned>();
