@@ -204,7 +204,7 @@ namespace ExpeditionIcons
                         };
 
                         var location = e.Pos;
-                        location.Z = 0;
+                        location.Z -= 10;
                         var showElement = true;
                         foreach (var explosive in explosives)
                         {
@@ -236,7 +236,7 @@ namespace ExpeditionIcons
                         animatedMetaData.Contains("ChestHeist"))
                     {
                         var location = e.Pos;
-                        location.Z = 0;
+                        location.Z -= 10;
                         var showElement = true;
                         foreach (var explosive in explosives)
                         {
@@ -401,7 +401,7 @@ namespace ExpeditionIcons
                 var text = "";
                 var background = Color.Green;
                 var location = e.Pos;
-                location.Z = 0;
+                location.Z -= 10;
                 if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionLogbookQuantityChest"))) && Settings.ShowLogbooks.Value)
                 {
                     text = text + " " + "Log che";
