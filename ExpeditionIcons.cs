@@ -184,7 +184,7 @@ namespace ExpeditionIcons
                 {
                     var positionedComp = e.GetComponent<Positioned>();
                     //var animatedMetaData = e.GetComponent<Animated>().BaseAnimatedObjectEntity.Metadata;
-                    var animatedMetaData = e.GetComponent<Animated>().ReadObjectAt<Entity>(0x1C0).Metadata;
+                    var animatedMetaData = e.GetComponent<Animated>().ReadObjectAt<Entity>(0x1C8).Metadata;
                     if (animatedMetaData == null) continue;
 
                     var text = "*";
@@ -1096,3 +1096,19 @@ namespace ExpeditionIcons
         }
     }
 }
+
+//public void FindStringOffset() some garbage i wrote to find a string based offset.Just check the values at the end of the loop
+//{
+//    string[] arr = new string[1000];
+//    int size = 0;
+//    for (int i = 0; i < 1000; i++)
+//    {
+//        var add = Address + i;
+//        var meta = GetObject<Entity>(M.Read<long>(add)).Metadata;
+//        if (meta != null && meta != "")
+//        {
+//            arr[size] = i + GetObject<Entity>(M.Read<long>(add)).Metadata;
+//            size++;
+//        }
+//    }
+//}
