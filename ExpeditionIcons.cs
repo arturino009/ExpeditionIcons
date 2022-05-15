@@ -608,9 +608,9 @@ namespace ExpeditionIcons
                 {
                     text = text + " " + "Pack ";
                     background = Settings.PacksizeColor;
-                    if (remnants.Contains(e))
+                    if (!remnants.Contains(e))
                     {
-                        remnants.Remove(e);
+                        remnants.Add(e);
                     }
                 }
 
