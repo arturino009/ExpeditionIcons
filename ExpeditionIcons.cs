@@ -36,7 +36,7 @@ namespace ExpeditionIcons
         List<Entity> artifacts = new List<Entity>();
         List<Entity> efficientLines = new List<Entity>();
         Entity detonator = new Entity();
-        bool usedDetonator;
+        bool usedDetonator = false;
         public override bool Initialise()
         {
             CanUseMultiThreading = true;
