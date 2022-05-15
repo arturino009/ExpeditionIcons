@@ -296,7 +296,12 @@ namespace ExpeditionIcons
                                     break;
                                 }
                             }
-
+                            var location = e.Pos;
+                            location.Z -= 10;
+                            if (showElement && Settings.ShowChests.Value)
+                            {
+                                DrawEllipseToWorld(location, 12, 15, 8, Color.Red);
+                            }
                             var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
                             if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible && showElement)
                                 DrawToLargeMiniMapText(ent, ent.TextureInfo);
@@ -325,6 +330,12 @@ namespace ExpeditionIcons
                                     break;
                                 }
                             }
+                            var location = e.Pos;
+                            location.Z -= 10;
+                            if (showElement && Settings.ShowChests.Value)
+                            {
+                                DrawEllipseToWorld(location, 12, 15, 8, Color.Red);
+                            }
                             var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
                             if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible && showElement)
                                 DrawToLargeMiniMapText(ent, ent.TextureInfo);
@@ -351,6 +362,12 @@ namespace ExpeditionIcons
                                     showElement = false;
                                     break;
                                 }
+                            }
+                            var location = e.Pos;
+                            location.Z -= 10;
+                            if (showElement && Settings.ShowChests.Value)
+                            {
+                                DrawEllipseToWorld(location, 12, 15, 8, Color.Red);
                             }
                             var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
                             if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible && showElement)
@@ -379,6 +396,12 @@ namespace ExpeditionIcons
                                     showElement = false;
                                     break;
                                 }
+                            }
+                            var location = e.Pos;
+                            location.Z -= 10;
+                            if (showElement && Settings.ShowChests.Value)
+                            {
+                                DrawEllipseToWorld(location, 12, 15, 8, Color.Red);
                             }
                             var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
                             if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible && showElement)

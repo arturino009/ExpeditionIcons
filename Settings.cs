@@ -14,9 +14,9 @@ namespace ExpeditionIcons
         public ColorNode OptimalColor { get; set; } = new ColorNode(Color.Yellow);
         [Menu("Highlight runic monsters")]
         public ToggleNode HiglightRunic { get; set; } = new ToggleNode(false);
-        [Menu("Highlight selected chests")]
+        [Menu("Highlight selected chests in logbook")]
         public ToggleNode HiglightArtifact { get; set; } = new ToggleNode(false);
-        [Menu("Show chests in minimap")]
+        [Menu("Show and highlight chests in maps")]
         public ToggleNode ShowChests { get; set; } = new ToggleNode(false);
         [Menu("Good mods", 100)]
         public EmptyNode SettingsEmptyGood { get; set; }
