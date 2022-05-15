@@ -36,6 +36,7 @@ namespace ExpeditionIcons
         List<Entity> artifacts = new List<Entity>();
         List<Entity> efficientLines = new List<Entity>();
         Entity detonator = new Entity();
+        bool usedDetonator;
         public override bool Initialise()
         {
             CanUseMultiThreading = true;
@@ -111,7 +112,6 @@ namespace ExpeditionIcons
             remnants.Clear();
             artifacts.Clear();
             explosives.Clear();
-            bool usedDetonator = false;
             foreach (var e in GameController.EntityListWrapper.OnlyValidEntities)
             {
                 if (e.Path == null) continue;
@@ -121,6 +121,10 @@ namespace ExpeditionIcons
                     if (!e.GetComponent<Targetable>().isTargetable)
                     {
                         usedDetonator = true;
+                    }
+                    else
+                    {
+                        usedDetonator = false;
                     }
                     continue;
                 }
@@ -987,19 +991,18 @@ namespace ExpeditionIcons
         //}
         public void getBestLine(List<Entity> nodes) //Using nearest neighbour. Pretty bad, but is very fast
         {
-            int placements;
-            try
-            {
-                placements = Int32.Parse(ingameStateIngameUi.GetChildFromIndices(118, 7, 12, 2, 0, 0, 0).Text); //the number of explosives from UI
-            }
-            catch
+            int placements = 0;
+            for (int i = 0; i < 5; i++)
             {
                 try
                 {
-                    placements = Int32.Parse(ingameStateIngameUi.GetChildFromIndices(117, 7, 12, 2, 0, 0, 0).Text);
+                    placements = Int32.Parse(ingameStateIngameUi.GetChildFromIndices(117 + i, 7, 12, 2, 0, 0, 0).Text); //the number of explosives from UI
+                    break;
                 }
-                catch { placements = 5; }
+                catch { }
             }
+            if (placements == 0) placements = 5;
+
             float maxRange = Settings.ExplosiveDistance * placements;
             float distance = 0;
             Entity prev = detonator;
