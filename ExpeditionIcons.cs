@@ -1003,7 +1003,7 @@ namespace ExpeditionIcons
             }
             if (placements == 0) placements = 5;
 
-            float maxRange = Settings.ExplosiveDistance * placements;
+            float maxRange = (Settings.ExplosiveDistance + Settings.ExplosiveRange) * placements;
             float distance = 0;
             Entity prev = detonator;
             while (nodes.Count != 0)
