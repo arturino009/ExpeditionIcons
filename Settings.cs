@@ -66,6 +66,11 @@ namespace ExpeditionIcons
         public ToggleNode ShowInfluence { get; set; } = new ToggleNode(true);
         [Menu("Color", parentIndex = 100)]
         public ColorNode InfluenceColor { get; set; } = new ColorNode(Color.Green);
+        [Menu("Show fractured", parentIndex = 100)]
+        public ToggleNode ShowFractured { get; set; } = new ToggleNode(true);
+        [Menu("Color", parentIndex = 100)]
+        public ColorNode FracturedColor { get; set; } = new ColorNode(Color.Gray);
+
 
 
 
@@ -83,7 +88,9 @@ namespace ExpeditionIcons
         public ToggleNode ChaosImmune { get; set; } = new ToggleNode(false);
         [Menu("Warn for crit immune", parentIndex = 101)]
         public ToggleNode CritImmune { get; set; } = new ToggleNode(false);
-        [Menu("Color for immunities", parentIndex = 101)]
+        [Menu("Warn for corrupted items", parentIndex = 101)]
+        public ToggleNode CorruptedItems { get; set; } = new ToggleNode(false);
+        [Menu("Color for danger", parentIndex = 101)]
         public ColorNode ImmuneColor { get; set; } = new ColorNode(Color.Red);
 
 
