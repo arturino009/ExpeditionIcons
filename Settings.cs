@@ -1,4 +1,4 @@
-﻿using System.Windows.Forms;
+using System.Windows.Forms;
 using ExileCore.Shared.Attributes;
 using ExileCore.Shared.Interfaces;
 using ExileCore.Shared.Nodes;
@@ -88,6 +88,10 @@ namespace ExpeditionIcons
         public ToggleNode ChaosImmune { get; set; } = new ToggleNode(false);
         [Menu("Warn for crit immune", parentIndex = 101)]
         public ToggleNode CritImmune { get; set; } = new ToggleNode(false);
+        [Menu("Warn for Culling", parentIndex = 101)]
+        public ToggleNode Culling { get; set; } = new ToggleNode(false);
+        [Menu("Warn for Regen", parentIndex = 101)]
+        public ToggleNode Regen { get; set; } = new ToggleNode(false);
         [Menu("Warn for corrupted items", parentIndex = 101)]
         public ToggleNode CorruptedItems { get; set; } = new ToggleNode(false);
         [Menu("Color for danger", parentIndex = 101)]
