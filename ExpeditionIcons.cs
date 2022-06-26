@@ -766,7 +766,7 @@ namespace ExpeditionIcons
                         (mods.Any(x => x.Contains("ExpeditionRelicModifierElitesRegenerateLifeEveryFourSeconds")) && Settings.Regen.Value) ||
                         (mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionCorruptedItemsElite")) && Settings.CorruptedItems.Value) ||
                         (mods.Any(x => x.Contains("ExpeditionRelicModifierAttackBlockSpellBlockMaxBlockChance")) && Settings.BlockChance.Value) ||
-                        (mods.Any(x => x.Contains("ExpeditionRelicModifierMaxResistancesAllResistances")) && Settings.MaxResistances.Value))
+                        (mods.Any(x => x.Contains("ExpeditionRelicModifierMaxRes")) && Settings.MaxResistances.Value))
                         
                      
                        
