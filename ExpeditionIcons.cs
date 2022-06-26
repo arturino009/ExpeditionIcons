@@ -59,6 +59,11 @@ namespace ExpeditionIcons
                     efficientLines.Clear();
                     getBestLine(remnants);
                 }
+                if (Input.GetKeyState(Settings.optimalLogBook.Value))
+                {
+                    efficientLines.Clear();
+                    getBestLine(artifacts);
+                }
                 ingameStateIngameUi = GameController.Game.IngameState.IngameUi;
 
                 if (ingameStateIngameUi.Map.SmallMiniMap.IsVisibleLocal)
