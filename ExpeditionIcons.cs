@@ -755,9 +755,7 @@ namespace ExpeditionIcons
                         }
                     }
 
-                    if (
-                        
-                        (mods.Any(x => x.Contains("ExpeditionRelicModifierImmunePhysicalDamage")) && Settings.PhysImmune.Value) ||
+                    if ((mods.Any(x => x.Contains("ExpeditionRelicModifierImmunePhysicalDamage")) && Settings.PhysImmune.Value) ||
                         (mods.Any(x => x.Contains("ExpeditionRelicModifierImmuneFireDamage")) && Settings.FireImmune.Value) ||
                         (mods.Any(x => x.Contains("ExpeditionRelicModifierImmuneColdDamage")) && Settings.ColdImmune.Value) ||
                         (mods.Any(x => x.Contains("ExpeditionRelicModifierImmuneLightningDamage")) && Settings.LightningImmune.Value) ||
@@ -767,9 +765,9 @@ namespace ExpeditionIcons
                         (mods.Any(x => x.Contains("ExpeditionRelicModifierCullingStrikeTwentyPercent")) && Settings.Culling.Value) ||
                         (mods.Any(x => x.Contains("ExpeditionRelicModifierElitesRegenerateLifeEveryFourSeconds")) && Settings.Regen.Value) ||
                         (mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionCorruptedItemsElite")) && Settings.CorruptedItems.Value) ||
-                        (mods.Any(x => x.Contains("ExpeditionRelicModifierAttackBlockSpellBlockMaxBlockChance")))
+                        (mods.Any(x => x.Contains("ExpeditionRelicModifierAttackBlockSpellBlockMaxBlockChance"))))
                         
-                        )
+                     
                        
 
                     {
