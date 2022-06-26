@@ -95,7 +95,9 @@ namespace ExpeditionIcons
         [Menu("Warn for corrupted items", parentIndex = 101)]
         public ToggleNode CorruptedItems { get; set; } = new ToggleNode(false);
         [Menu("Max Block", parentIndex = 101)]
-        public ToggleNode BlockChance { get; set; } = new ToggleNode(false);
+        public ToggleNode BlockChance { get; set; } = new ToggleNode(false);  
+        [Menu("30% ele resistance", parentIndex = 101)]
+        public ToggleNode MaxResistances { get; set; } = new ToggleNode(false);
         [Menu("Color for danger", parentIndex = 101)]
         public ColorNode ImmuneColor { get; set; } = new ColorNode(Color.Red);
 
