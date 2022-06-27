@@ -97,7 +97,6 @@ namespace ExpeditionIcons
                 efficientLines.Clear();
                 getBestLine(artifacts);
             }
-            base.DrawSettings();
             if (ImGui.Button("Calculate explosion radius. Place 1 explosive and make it intersect the detonator"))
             {
                 Settings.ExplosiveRange.Value = Vector3.Distance(explosives[0].Pos, detonator.Pos);
@@ -106,6 +105,7 @@ namespace ExpeditionIcons
             {
                 Settings.ExplosiveDistance.Value = Vector3.Distance(explosives[0].Pos, detonator.Pos);
             }
+            base.DrawSettings();
         }
 
         public override void Render()
