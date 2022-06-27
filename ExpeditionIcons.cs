@@ -766,12 +766,14 @@ namespace ExpeditionIcons
                         (mods.Any(x => x.Contains("ExpeditionRelicModifierImmuneLightningDamage")) && Settings.LightningImmune.Value) ||
                         (mods.Any(x => x.Contains("ExpeditionRelicModifierImmuneChaosDamage")) && Settings.ChaosImmune.Value) ||
                         (mods.Any(x => x.Contains("ExpeditionRelicModifierCannotBeCrit")) && Settings.CritImmune.Value) || 
-                        (mods.Any(x => x.Contains("ExpeditionRelicModifierImmuneStatusAilments")) && Settings.FireImmune.Value) ||
+                        (mods.Any(x => x.Contains("ExpeditionRelicModifierImmuneStatusAilments")) && Settings.AilmentImmune.Value) ||
                         (mods.Any(x => x.Contains("ExpeditionRelicModifierCullingStrikeTwentyPercent")) && Settings.Culling.Value) ||
                         (mods.Any(x => x.Contains("ExpeditionRelicModifierElitesRegenerateLifeEveryFourSeconds")) && Settings.Regen.Value) ||
                         (mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionCorruptedItemsElite")) && Settings.CorruptedItems.Value) ||
                         (mods.Any(x => x.Contains("ExpeditionRelicModifierAttackBlockSpellBlockMaxBlockChance")) && Settings.BlockChance.Value) ||
-                        (mods.Any(x => x.Contains("ExpeditionRelicModifierResistancesAndMaxResistances")) && Settings.MaxResistances.Value))
+                        (mods.Any(x => x.Contains("ExpeditionRelicModifierResistancesAndMaxResistances")) && Settings.MaxResistances.Value) ||
+                        (mods.Any(x => x.Contains("ExpeditionRelicModifierCannotBeLeechedFrom")) && Settings.NoLeech.Value) ||
+                        (mods.Any(x => x.Contains("ExpeditionRelicModifierImmuneToCurses")) && Settings.NoCurse.Value))
                         
                      
                        

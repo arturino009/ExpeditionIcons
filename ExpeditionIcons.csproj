@@ -73,7 +73,6 @@
   <ItemGroup>
     <Compile Include="ExpeditionIcons.cs" />
     <Compile Include="MapIcon.cs" />
-    <Compile Include="PermutationBuilder.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
