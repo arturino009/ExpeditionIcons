@@ -10,7 +10,7 @@ namespace ExpeditionIcons
     {
         public ToggleNode Enable { get; set; } = new ToggleNode(false);
         public HotkeyNode optimalMap { get; set; } = new HotkeyNode(Keys.F6);
-        public HotkeyNode optimalLogBook { get; set; } = new HotkeyNode(Keys.F6);
+        public HotkeyNode optimalLogBook { get; set; } = new HotkeyNode(Keys.F7);
         [Menu("Optimal placement color")]
         public ColorNode OptimalColor { get; set; } = new ColorNode(Color.Yellow);
         [Menu("Highlight runic monsters")]
