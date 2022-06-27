@@ -31,36 +31,26 @@ namespace ExpeditionIcons
 
         [Menu("Good mods", 100)]
         public EmptyNode SettingsEmptyGood { get; set; }
-
         [Menu("Show double runic monsters", parentIndex = 100)]
         public ToggleNode ShowDouble { get; set; } = new ToggleNode(true);
         [Menu("Color", parentIndex = 100)]
         public ColorNode DoubleColor { get; set; } = new ColorNode(Color.Gold);
-
         [Menu("Show logbook quantity", parentIndex = 100)]
         public ToggleNode ShowLogbooks { get; set; } = new ToggleNode(true);
         [Menu("Color", parentIndex = 100)]
         public ColorNode LogbookColor { get; set; } = new ColorNode(Color.Green);
-
         [Menu("Show basic currency", parentIndex = 100)]
         public ToggleNode ShowBasicCurrency { get; set; } = new ToggleNode(false);
         [Menu("Color", parentIndex = 100)]
         public ColorNode BasicColor { get; set; } = new ColorNode(Color.Green);
-        [Menu("Show harbinger", parentIndex = 100)]
-        public ToggleNode ShowHarbinger { get; set; } = new ToggleNode(false);
-        [Menu("Color", parentIndex = 100)]
-        public ColorNode HarbingerColor { get; set; } = new ColorNode(Color.Green);
-
         [Menu("Show stacked decks", parentIndex = 100)]
         public ToggleNode ShowStackedDecks { get; set; } = new ToggleNode(false);
         [Menu("Color", parentIndex = 100)]
         public ColorNode StackedColor { get; set; } = new ColorNode(Color.Green);
-
         [Menu("Show item quantity", parentIndex = 100)]
         public ToggleNode ShowQuant { get; set; } = new ToggleNode(true);
         [Menu("Color", parentIndex = 100)]
         public ColorNode QuantColor { get; set; } = new ColorNode(Color.Green);
-
         [Menu("Show artifact quantity", parentIndex = 100)]
         public ToggleNode ShowArtifact { get; set; } = new ToggleNode(false);
         [Menu("Color", parentIndex = 100)]
@@ -81,7 +71,14 @@ namespace ExpeditionIcons
         public ToggleNode ShowFractured { get; set; } = new ToggleNode(false);
         [Menu("Color", parentIndex = 100)]
         public ColorNode FracturedColor { get; set; } = new ColorNode(Color.Gray);
-
+        [Menu("Show harbinger", parentIndex = 100)]
+        public ToggleNode ShowHarbinger { get; set; } = new ToggleNode(false);
+        [Menu("Color", parentIndex = 100)]
+        public ColorNode HarbingerColor { get; set; } = new ColorNode(Color.Green);
+        [Menu("Show heist", parentIndex = 100)]
+        public ToggleNode ShowHeist { get; set; } = new ToggleNode(false);
+        [Menu("Color", parentIndex = 100)]
+        public ColorNode HeistColor { get; set; } = new ColorNode(Color.Green);
 
         [Menu("Bad mods", 101)]
         public EmptyNode SettingsEmptyBad { get; set; }

@@ -244,7 +244,7 @@ namespace ExpeditionIcons
                             (animatedMetaData.Contains("ChestCurrency") && Settings.ShowBasicCurrency.Value) ||
                             (animatedMetaData.Contains("ChestTrinkets") && Settings.ShowJewellery.Value) ||
                             (animatedMetaData.Contains("ChestHarbinger") && Settings.ShowHarbinger.Value) ||
-                            animatedMetaData.Contains("ChestHeist"))
+                            (animatedMetaData.Contains("ChestHeist") && Settings.ShowHeist.Value))
                         {
                             var location = e.Pos;
                             location.Z -= 10;
