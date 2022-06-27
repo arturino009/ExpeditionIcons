@@ -10,6 +10,7 @@ namespace ExpeditionIcons
     {
         public ToggleNode Enable { get; set; } = new ToggleNode(false);
         public HotkeyNode optimalMap { get; set; } = new HotkeyNode(Keys.F6);
+        public HotkeyNode optimalLogBook { get; set; } = new HotkeyNode(Keys.F6);
         [Menu("Optimal placement color")]
         public ColorNode OptimalColor { get; set; } = new ColorNode(Color.Yellow);
         [Menu("Highlight runic monsters")]
@@ -94,6 +95,10 @@ namespace ExpeditionIcons
         public ToggleNode Regen { get; set; } = new ToggleNode(false);
         [Menu("Warn for corrupted items", parentIndex = 101)]
         public ToggleNode CorruptedItems { get; set; } = new ToggleNode(false);
+        [Menu("Max Block", parentIndex = 101)]
+        public ToggleNode BlockChance { get; set; } = new ToggleNode(false);  
+        [Menu("30% ele resistance", parentIndex = 101)]
+        public ToggleNode MaxResistances { get; set; } = new ToggleNode(false);
         [Menu("Color for danger", parentIndex = 101)]
         public ColorNode ImmuneColor { get; set; } = new ColorNode(Color.Red);
 

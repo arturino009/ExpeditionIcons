@@ -59,6 +59,11 @@ namespace ExpeditionIcons
                     efficientLines.Clear();
                     getBestLine(remnants);
                 }
+                if (Input.GetKeyState(Settings.optimalLogBook.Value))
+                {
+                    efficientLines.Clear();
+                    getBestLine(artifacts);
+                }
                 ingameStateIngameUi = GameController.Game.IngameState.IngameUi;
 
                 if (ingameStateIngameUi.Map.SmallMiniMap.IsVisibleLocal)
@@ -764,7 +769,12 @@ namespace ExpeditionIcons
                         (mods.Any(x => x.Contains("ExpeditionRelicModifierImmuneStatusAilments")) && Settings.FireImmune.Value) ||
                         (mods.Any(x => x.Contains("ExpeditionRelicModifierCullingStrikeTwentyPercent")) && Settings.Culling.Value) ||
                         (mods.Any(x => x.Contains("ExpeditionRelicModifierElitesRegenerateLifeEveryFourSeconds")) && Settings.Regen.Value) ||
-                        (mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionCorruptedItemsElite")) && Settings.CorruptedItems.Value))
+                        (mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionCorruptedItemsElite")) && Settings.CorruptedItems.Value) ||
+                        (mods.Any(x => x.Contains("ExpeditionRelicModifierAttackBlockSpellBlockMaxBlockChance")) && Settings.BlockChance.Value) ||
+                        (mods.Any(x => x.Contains("ExpeditionRelicModifierResistancesAndMaxResistances")) && Settings.MaxResistances.Value))
+                        
+                     
+                       
 
                     {
                         text = "WARN";
