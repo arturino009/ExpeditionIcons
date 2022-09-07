@@ -445,10 +445,31 @@ namespace ExpeditionIcons
                             artifacts.Add(e);
                         }
                     }
+                    
+                    ExpeditionRelicModifierItemRarityMonster
                     if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionLogbookQuantityMonster"))) && Settings.ShowLogbooks.Value)
                     {
                         text = text + " " + "Log mon";
                         background = Settings.LogbookColor;
+                        if (!remnants.Contains(e))
+                        {
+                            remnants.Add(e);
+                        }
+                    }
+                    
+                    if ((mods.Any(x => x.Contains("ExpeditionRelicModifierItemRarityMonster"))) && Settings.ShowRarity.Value)
+                    {
+                        text = text + " " + "Log mon";
+                        background = Settings.RarityColor;
+                        if (!remnants.Contains(e))
+                        {
+                            remnants.Add(e);
+                        }
+                    }
+                    if ((mods.Any(x => x.Contains("ExpeditionRelicModifierItemRarityChest"))) && Settings.ShowRarity.Value)
+                    {
+                        text = text + " " + "Log mon";
+                        background = Settings.RarityColor;
                         if (!remnants.Contains(e))
                         {
                             remnants.Add(e);
