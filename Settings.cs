@@ -51,7 +51,16 @@ namespace ExpeditionIcons
         public ToggleNode ShowQuant { get; set; } = new ToggleNode(true);
         [Menu("Color", parentIndex = 100)]
         public ColorNode QuantColor { get; set; } = new ColorNode(Color.Green);
+        
         [Menu("Show item Rarity", parentIndex = 100)]
+        public ToggleNode ShowRarity { get; set; } = new ToggleNode(true);
+        [Menu("Color", parentIndex = 100)]
+        public ColorNode RarityColor { get; set; } = new ColorNode(Color.Green);
+                [Menu("Show item Rarity", parentIndex = 100)]
+        public ToggleNode ShowRarity { get; set; } = new ToggleNode(true);
+        [Menu("Color", parentIndex = 100)]
+        public ColorNode RarityColor { get; set; } = new ColorNode(Color.Green);
+                [Menu("Show item Rarity", parentIndex = 100)]
         public ToggleNode ShowRarity { get; set; } = new ToggleNode(true);
         [Menu("Color", parentIndex = 100)]
         public ColorNode RarityColor { get; set; } = new ColorNode(Color.Green);
