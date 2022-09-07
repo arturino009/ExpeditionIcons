@@ -446,7 +446,6 @@ namespace ExpeditionIcons
                         }
                     }
                     
-                    ExpeditionRelicModifierItemRarityMonster
                     if ((mods.Any(x => x.Contains("ExpeditionRelicModifierExpeditionLogbookQuantityMonster"))) && Settings.ShowLogbooks.Value)
                     {
                         text = text + " " + "Log mon";
@@ -459,7 +458,7 @@ namespace ExpeditionIcons
                     
                     if ((mods.Any(x => x.Contains("ExpeditionRelicModifierItemRarityMonster"))) && Settings.ShowRarity.Value)
                     {
-                        text = text + " " + "Log mon";
+                        text = text + " " + "Rarity Mon";
                         background = Settings.RarityColor;
                         if (!remnants.Contains(e))
                         {
@@ -468,7 +467,7 @@ namespace ExpeditionIcons
                     }
                     if ((mods.Any(x => x.Contains("ExpeditionRelicModifierItemRarityChest"))) && Settings.ShowRarity.Value)
                     {
-                        text = text + " " + "Log mon";
+                        text = text + " " + "RarityChest";
                         background = Settings.RarityColor;
                         if (!remnants.Contains(e))
                         {
