@@ -200,7 +200,7 @@ namespace ExpeditionIcons
                     if (e.Path.Contains("markerPath"))
                     {
                         var positionedComp = e.GetComponent<Positioned>();
-                        var animatedMetaData = e.GetComponent<Animated>().BaseAnimatedObjectEntity?.Metadata;
+                        var animatedMetaData = e.GetComponent<Animated>().BaseAnimatedObjectEntity.Metadata;
                         //var animatedMetaData = e.GetComponent<Animated>().ReadObjectAt<Entity>(0x1C8).Metadata;
                         if (animatedMetaData == null) continue;
 
