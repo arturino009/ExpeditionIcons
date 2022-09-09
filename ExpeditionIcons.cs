@@ -46,6 +46,20 @@ namespace ExpeditionIcons
             TickLogic();
             return null;
         }
+        
+        private static TValue GetOrAdd<TKey, TValue>(ConditionalWeakTable<TKey, TValue> table, TKey key, Func<TKey, TValue> createFunc)
+            where TKey : class
+            where TValue : class
+        {
+            if (!table.TryGetValue(key, out var result))
+            {
+                result = createFunc(key);
+                table.Add(key, result);
+            }
+
+            return result;
+        }
+        
         private void TickLogic()
         {
             try
@@ -110,6 +124,10 @@ namespace ExpeditionIcons
 
         public override void Render()
         {
+        
+            const string markerPath = "Metadata/MiscellaneousObjects/Expedition/ExpeditionMarker";
+            const string explosivePath = "Metadata/MiscellaneousObjects/Expedition/ExpeditionExplosive";
+            const string relicPath = "Metadata/MiscellaneousObjects/Expedition/ExpeditionRelic";
             remnants.Clear();
             artifacts.Clear();
             explosives.Clear();
@@ -159,14 +177,14 @@ namespace ExpeditionIcons
                 }
 
                 //GetComponent
-                foreach (var e in GameController.EntityListWrapper.OnlyValidEntities)
-                //foreach (var e in GameController.EntityListWrapper.NotOnlyValidEntities)
+                //foreach (var e in GameController.EntityListWrapper.OnlyValidEntities)
+                foreach (var e in GameController.EntityListWrapper.ValidEntitiesByType[EntityType.IngameIcon].OrderBy(x => x.Path != markerPath))
                 {
                     if (e.Path == null) continue;
                     // var renderComponent = e?.GetComponent<Render>();
                     // if (renderComponent == null) continue;
 
-                    if (e.Path.Contains("Terrain/Leagues/Expedition/Tiles"))
+                    if (e.Path.Contains(markerPath))
                     {
                         var positionedComp = e.GetComponent<Positioned>();
 
