@@ -197,7 +197,7 @@ namespace ExpeditionIcons
                         continue;
                     }
 
-                    if (e.Path.Contains("ExpeditionMarker"))
+                    if (e.Path.Contains("markerPath"))
                     {
                         var positionedComp = e.GetComponent<Positioned>();
                         var animatedMetaData = e.GetComponent<Animated>().BaseAnimatedObjectEntity?.Metadata;
