@@ -172,7 +172,7 @@ namespace ExpeditionIcons
                     // var renderComponent = e?.GetComponent<Render>();
                     // if (renderComponent == null) continue;
 
-                    if (e.Path.Contains(markerPath))
+                    if (e.Path.Contains("Terrain/Leagues/Expedition/Tiles"))
                     {
                         var positionedComp = e.GetComponent<Positioned>();
 
