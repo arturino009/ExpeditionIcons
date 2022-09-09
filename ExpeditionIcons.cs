@@ -195,7 +195,7 @@ namespace ExpeditionIcons
                     {
                         var positionedComp = e.GetComponent<Positioned>();
                         //var animatedMetaData = e.GetComponent<Animated>().BaseAnimatedObjectEntity.Metadata;
-                        var animatedMetaData = e.GetComponent<Animated>().ReadObjectAt<Entity>(0x1C8).Metadata;
+                        var animatedMetaData = e.GetComponent<Animated>().ReadObjectAt<Entity>(0x1E8).Metadata;
                         if (animatedMetaData == null) continue;
 
                         var text = "*";
@@ -898,7 +898,7 @@ namespace ExpeditionIcons
             {
                 try
                 {
-                    placements = Int32.Parse(ingameStateIngameUi.GetChildFromIndices(117 + i, 7, 12, 2, 0, 0, 0).Text); //the number of explosives from UI
+                    placements = Int32.Parse(ingameStateIngameUi.GetChildFromIndices(107 + i, 7, 12, 2, 0, 0, 0).Text); //the number of explosives from UI
                     break;
                 }
                 catch { }
