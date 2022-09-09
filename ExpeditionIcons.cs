@@ -47,18 +47,6 @@ namespace ExpeditionIcons
             return null;
         }
         
-        private static TValue GetOrAdd<TKey, TValue>(ConditionalWeakTable<TKey, TValue> table, TKey key, Func<TKey, TValue> createFunc)
-            where TKey : class
-            where TValue : class
-        {
-            if (!table.TryGetValue(key, out var result))
-            {
-                result = createFunc(key);
-                table.Add(key, result);
-            }
-
-            return result;
-        }
         
         private void TickLogic()
         {
