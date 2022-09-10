@@ -79,6 +79,11 @@ namespace ExpeditionIcons
         public ToggleNode ShowHeist { get; set; } = new ToggleNode(false);
         [Menu("Color", parentIndex = 100)]
         public ColorNode HeistColor { get; set; } = new ColorNode(Color.Green);
+		[Menu("Show item Rarity", parentIndex = 100)]
+        public ToggleNode ShowRarity { get; set; } = new ToggleNode(true);
+        [Menu("Color", parentIndex = 100)]
+        public ColorNode RarityColor { get; set; } = new ColorNode(Color.Green);
+
 
         [Menu("Bad mods", 101)]
         public EmptyNode SettingsEmptyBad { get; set; }
