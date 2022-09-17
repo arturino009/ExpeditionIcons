@@ -454,7 +454,24 @@ namespace ExpeditionIcons
                             remnants.Add(e);
                         }
                     }
-
+                    if ((mods.Any(x => x.Contains("ExpeditionRelicModifierItemRarityMonster"))) && Settings.ShowRarity.Value)
+                    {
+                        text = text + " " + "Rarity Mon";
+                        background = Settings.RarityColor;
+                        if (!remnants.Contains(e))
+                        {
+                            remnants.Add(e);
+                        }
+                    }
+                    if ((mods.Any(x => x.Contains("ExpeditionRelicModifierItemRarityChest"))) && Settings.ShowRarity.Value)
+                    {
+                        text = text + " " + "RarityChest";
+                        background = Settings.RarityColor;
+                        if (!remnants.Contains(e))
+                        {
+                            remnants.Add(e);
+                        }
+                    }
                     //if ((mods.Any(x => x.Contains("ExpeditionRelicModifierLegionSplintersElite"))) || 
                     //(mods.Any(x => x.Contains("ExpeditionRelicModifierEternalEmpireLegionElite"))))
                     //            {
