@@ -948,11 +948,11 @@ namespace ExpeditionIcons
         public void getBestLine(List<Entity> nodes) //Using nearest neighbour. Pretty bad, but is very fast
         {
             int placements = 0;
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 10; i++)
             {
                 try
                 {
-                    placements = Int32.Parse(ingameStateIngameUi.GetChildFromIndices(107 + i, 7, 12, 2, 0, 0, 0).Text); //the number of explosives from UI
+                    placements = Int32.Parse(ingameStateIngameUi.GetChildFromIndices(103 + i, 7, 12, 2, 0, 0, 0).Text); //the number of explosives from UI
                     break;
                 }
                 catch { }
