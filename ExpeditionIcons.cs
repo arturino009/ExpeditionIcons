@@ -53,12 +53,12 @@ namespace ExpeditionIcons
                 if (Input.GetKeyState(Settings.optimalMap.Value))
                 {
                     efficientLines.Clear();
-                    getBestLine(remnants);
+                    getBestLine(remnants, false);
                 }
                 if (Input.GetKeyState(Settings.optimalLogBook.Value))
                 {
                     efficientLines.Clear();
-                    getBestLine(artifacts);
+                    getBestLine(artifacts, true);
                 }
                 ingameStateIngameUi = GameController.Game.IngameState.IngameUi;
 
@@ -90,12 +90,12 @@ namespace ExpeditionIcons
             if (ImGui.Button("Calculate for map (maximize runic monsters and rewards from monsters)"))
             {
                 efficientLines.Clear();
-                getBestLine(remnants);
+                getBestLine(remnants, false);
             }
             if (ImGui.Button("Calculate for logbook (maximize artifacts and rewards from chests)"))
             {
                 efficientLines.Clear();
-                getBestLine(artifacts);
+                getBestLine(artifacts, true);
             }
             if (ImGui.Button("Calculate explosion radius. Place 1 explosive and make it intersect the detonator"))
             {
@@ -908,7 +908,7 @@ namespace ExpeditionIcons
                 Graphics.DrawLine(point1, point2, lineWidth, color);
             }
         }
-        public void getBestLine(List<Entity> nodes) //Using nearest neighbour. Pretty bad, but is very fast
+        public void getBestLine(List<Entity> nodes, bool logbook) //Using nearest neighbour. Pretty bad, but is very fast
         {
             int placements = 0;
             for (int i = 0; i < 10; i++)
@@ -927,11 +927,47 @@ namespace ExpeditionIcons
             }
             else
             {
-                DebugWindow.LogError($"Found {placements} explosions in UI.");
+                DebugWindow.LogMsg($"Found {placements} explosions in UI.");
             }
-                
 
-            float maxRange = (Settings.ExplosiveDistance + Settings.ExplosiveRange) * placements;
+            var logmods = GameController.Game.IngameState.Data.MapStats;
+
+            Dictionary<string, int> searchable = logmods.ToDictionary(item => item.Key.ToString(), item => item.Value); //I dont know how to convert GameStat to string, so this will do I guess
+
+            float explosiveDistance = 0;
+            float explosiveRadius = 0;
+            if (logbook)
+            {
+                if (searchable.ContainsKey("MapExpeditionMaximumPlacementDistancePct"))
+                {
+                    explosiveDistance = 970 + searchable["MapExpeditionMaximumPlacementDistancePct"] * 970 / 100;
+                    DebugWindow.LogMsg($"Found logbook distance mod, setting distance to {explosiveDistance}");
+                }
+                else
+                {
+                    explosiveDistance = 970;
+                }
+                if (searchable.ContainsKey("MapExpeditionExplosionRadiusPct"))
+                {
+                    explosiveRadius = 305 + searchable["MapExpeditionExplosionRadiusPct"] * 305 / 100;
+                    DebugWindow.LogMsg($"Found logbook radius mod, setting radius to {explosiveRadius}");
+                }
+                else
+                {
+                    explosiveRadius = 305;
+                }
+            }
+            else
+            {
+                explosiveDistance = Settings.ExplosiveDistance;
+                explosiveRadius = Settings.ExplosiveRange;
+                DebugWindow.LogMsg("Not in a logbook, setting values to the ones in settings");
+            }
+            //logbook distance = 970 + 25% = 1213? MapExpeditionMaximumPlacementDistancePct
+            //range = 305 + 35% = 409? MapExpeditionExplosionRadiusPct 
+
+
+            float maxRange = (explosiveDistance + explosiveRadius) * placements;
             float distance = 0;
             Entity prev = detonator;
             while (nodes.Count != 0)
