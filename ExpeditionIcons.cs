@@ -920,7 +920,16 @@ namespace ExpeditionIcons
                 }
                 catch { }
             }
-            if (placements == 0) placements = 5;
+            if (placements == 0)
+            {
+                placements = 5;
+                DebugWindow.LogError("Couldn't find explosion UI. Defaulting to 5");
+            }
+            else
+            {
+                DebugWindow.LogError($"Found {placements} explosions in UI.");
+            }
+                
 
             float maxRange = (Settings.ExplosiveDistance + Settings.ExplosiveRange) * placements;
             float distance = 0;
@@ -1017,19 +1026,3 @@ namespace ExpeditionIcons
         }
     }
 }
-
-//public void FindStringOffset() some garbage i wrote to find a string based offset.Just check the values at the end of the loop
-//{
-//    string[] arr = new string[1000];
-//    int size = 0;
-//    for (int i = 0; i < 1000; i++)
-//    {
-//        var add = Address + i;
-//        var meta = GetObject<Entity>(M.Read<long>(add)).Metadata;
-//        if (meta != null && meta != "")
-//        {
-//            arr[size] = i + GetObject<Entity>(M.Read<long>(add)).Metadata;
-//            size++;
-//        }
-//    }
-//}
