@@ -20,15 +20,6 @@ namespace ExpeditionIcons
         [Menu("Show and highlight chests in maps")]
         public ToggleNode ShowChests { get; set; } = new ToggleNode(false);
 
-
-        [Menu("Explosive settings", 102)]
-        public EmptyNode SettingsExplosive { get; set; }
-        [Menu("Explosive range (Don't change, use the button)", parentIndex = 102)]
-        public RangeNode<float> ExplosiveRange { get; set; } = new RangeNode<float>(310, 310, 600);
-        [Menu("Explosive distance (Don't change, use the button)", parentIndex = 102)]
-        public RangeNode<float> ExplosiveDistance { get; set; } = new RangeNode<float>(970, 970, 2000);
-
-
         [Menu("Good mods", 100)]
         public EmptyNode SettingsEmptyGood { get; set; }
         [Menu("Show double runic monsters", parentIndex = 100)]

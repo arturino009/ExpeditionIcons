@@ -33,6 +33,10 @@ namespace ExpeditionIcons
         List<Entity> efficientLines = new List<Entity>();
         Entity detonator = new Entity();
         bool usedDetonator = false;
+        const float baseExplosiveDistance = 970;
+        const float baseExplosiveRadius = 305;
+        float explosiveDistance = 970;
+        float explosiveRadius = 305;
         public override bool Initialise()
         {
             CanUseMultiThreading = true;
@@ -53,12 +57,12 @@ namespace ExpeditionIcons
                 if (Input.GetKeyState(Settings.optimalMap.Value))
                 {
                     efficientLines.Clear();
-                    getBestLine(remnants, false);
+                    getBestLine(remnants);
                 }
                 if (Input.GetKeyState(Settings.optimalLogBook.Value))
                 {
                     efficientLines.Clear();
-                    getBestLine(artifacts, true);
+                    getBestLine(artifacts);
                 }
                 ingameStateIngameUi = GameController.Game.IngameState.IngameUi;
 
@@ -84,26 +88,43 @@ namespace ExpeditionIcons
         public override void AreaChange(AreaInstance area)
         {
             efficientLines.Clear();
+
+            var logmods = GameController.Game.IngameState.Data.MapStats;
+
+            Dictionary<string, int> searchable = logmods.ToDictionary(item => item.Key.ToString(), item => item.Value); //I dont know how to convert GameStat to string, so this will do I guess
+
+            if (searchable.ContainsKey("MapExpeditionMaximumPlacementDistancePct"))
+            {
+                explosiveDistance = searchable["MapExpeditionMaximumPlacementDistancePct"] * baseExplosiveDistance / 100 + baseExplosiveDistance;
+                DebugWindow.LogMsg($"Found distance mod, setting distance to {explosiveDistance}");
+            }
+            else
+            {
+                explosiveDistance = baseExplosiveDistance;
+            }
+            if (searchable.ContainsKey("MapExpeditionExplosionRadiusPct"))
+            {
+                explosiveRadius = searchable["MapExpeditionExplosionRadiusPct"] * baseExplosiveRadius / 100 + baseExplosiveRadius;
+                DebugWindow.LogMsg($"Found radius mod, setting radius to {explosiveRadius}");
+            }
+            else
+            {
+                explosiveRadius = baseExplosiveRadius;
+            }
+            //logbook distance = 970 + 25% = 1213? MapExpeditionMaximumPlacementDistancePct
+            //range = 305 + 35% = 409? MapExpeditionExplosionRadiusPct 
         }
         public override void DrawSettings()
         {
             if (ImGui.Button("Calculate for map (maximize runic monsters and rewards from monsters)"))
             {
                 efficientLines.Clear();
-                getBestLine(remnants, false);
+                getBestLine(remnants);
             }
             if (ImGui.Button("Calculate for logbook (maximize artifacts and rewards from chests)"))
             {
                 efficientLines.Clear();
-                getBestLine(artifacts, true);
-            }
-            if (ImGui.Button("Calculate explosion radius. Place 1 explosive and make it intersect the detonator"))
-            {
-                Settings.ExplosiveRange.Value = Vector3.Distance(explosives[0].Pos, detonator.Pos);
-            }
-            if (ImGui.Button("Calculate explosion distance. Place 1 explosive maximum distance from the detonator"))
-            {
-                Settings.ExplosiveDistance.Value = Vector3.Distance(explosives[0].Pos, detonator.Pos);
+                getBestLine(artifacts);
             }
             base.DrawSettings();
         }
@@ -219,7 +240,7 @@ namespace ExpeditionIcons
                             var showElement = true;
                             foreach (var explosive in explosives)
                             {
-                                if (Vector3.Distance(explosive.Pos, e.Pos) < Settings.ExplosiveRange + 20)
+                                if (Vector3.Distance(explosive.Pos, e.Pos) < explosiveRadius + 20)
                                 {
                                     showElement = false;
                                     break;
@@ -251,7 +272,7 @@ namespace ExpeditionIcons
                             var showElement = true;
                             foreach (var explosive in explosives)
                             {
-                                if (Vector3.Distance(explosive.Pos, e.Pos) < Settings.ExplosiveRange + 20)
+                                if (Vector3.Distance(explosive.Pos, e.Pos) < explosiveRadius + 20)
                                 {
                                     showElement = false;
                                     break;
@@ -301,7 +322,7 @@ namespace ExpeditionIcons
                                 var showElement = true;
                                 foreach (var explosive in explosives)
                                 {
-                                    if (Vector3.Distance(explosive.Pos, e.Pos) < Settings.ExplosiveRange + 20)
+                                    if (Vector3.Distance(explosive.Pos, e.Pos) < explosiveRadius + 20)
                                     {
                                         showElement = false;
                                         break;
@@ -335,7 +356,7 @@ namespace ExpeditionIcons
                                 var showElement = true;
                                 foreach (var explosive in explosives)
                                 {
-                                    if (Vector3.Distance(explosive.Pos, e.Pos) < Settings.ExplosiveRange + 20)
+                                    if (Vector3.Distance(explosive.Pos, e.Pos) < explosiveRadius + 20)
                                     {
                                         showElement = false;
                                         break;
@@ -368,7 +389,7 @@ namespace ExpeditionIcons
                                 var showElement = true;
                                 foreach (var explosive in explosives)
                                 {
-                                    if (Vector3.Distance(explosive.Pos, e.Pos) < Settings.ExplosiveRange + 20)
+                                    if (Vector3.Distance(explosive.Pos, e.Pos) < explosiveRadius + 20)
                                     {
                                         showElement = false;
                                         break;
@@ -402,7 +423,7 @@ namespace ExpeditionIcons
                                 var showElement = true;
                                 foreach (var explosive in explosives)
                                 {
-                                    if (Vector3.Distance(explosive.Pos, e.Pos) < Settings.ExplosiveRange + 20)
+                                    if (Vector3.Distance(explosive.Pos, e.Pos) < explosiveRadius + 20)
                                     {
                                         showElement = false;
                                         break;
@@ -818,7 +839,7 @@ namespace ExpeditionIcons
                     var showElement = true;
                     foreach (var explosive in explosives)
                     {
-                        if (Vector3.Distance(explosive.Pos, e.Pos) < Settings.ExplosiveRange + 20)
+                        if (Vector3.Distance(explosive.Pos, e.Pos) < explosiveRadius + 20)
                         {
                             showElement = false;
                             break;
@@ -908,17 +929,17 @@ namespace ExpeditionIcons
                 Graphics.DrawLine(point1, point2, lineWidth, color);
             }
         }
-        public void getBestLine(List<Entity> nodes, bool logbook) //Using nearest neighbour. Pretty bad, but is very fast
+        public void getBestLine(List<Entity> nodes) //Using nearest neighbour. Pretty bad, but is very fast
         {
             int placements = 0;
             for (int i = 0; i < 10; i++)
             {
-                try
+                ingameStateIngameUi.TryGetChildFromIndices(out var node, 103 + i, 7, 12, 2, 0, 0, 0); //the number of explosives from UI
+                if(node != null)
                 {
-                    placements = Int32.Parse(ingameStateIngameUi.GetChildFromIndices(103 + i, 7, 12, 2, 0, 0, 0).Text); //the number of explosives from UI
+                    placements = Int32.Parse(node.Text);
                     break;
                 }
-                catch { }
             }
             if (placements == 0)
             {
@@ -929,43 +950,6 @@ namespace ExpeditionIcons
             {
                 DebugWindow.LogMsg($"Found {placements} explosions in UI.");
             }
-
-            var logmods = GameController.Game.IngameState.Data.MapStats;
-
-            Dictionary<string, int> searchable = logmods.ToDictionary(item => item.Key.ToString(), item => item.Value); //I dont know how to convert GameStat to string, so this will do I guess
-
-            float explosiveDistance = 0;
-            float explosiveRadius = 0;
-            if (logbook)
-            {
-                if (searchable.ContainsKey("MapExpeditionMaximumPlacementDistancePct"))
-                {
-                    explosiveDistance = 970 + searchable["MapExpeditionMaximumPlacementDistancePct"] * 970 / 100;
-                    DebugWindow.LogMsg($"Found logbook distance mod, setting distance to {explosiveDistance}");
-                }
-                else
-                {
-                    explosiveDistance = 970;
-                }
-                if (searchable.ContainsKey("MapExpeditionExplosionRadiusPct"))
-                {
-                    explosiveRadius = 305 + searchable["MapExpeditionExplosionRadiusPct"] * 305 / 100;
-                    DebugWindow.LogMsg($"Found logbook radius mod, setting radius to {explosiveRadius}");
-                }
-                else
-                {
-                    explosiveRadius = 305;
-                }
-            }
-            else
-            {
-                explosiveDistance = Settings.ExplosiveDistance;
-                explosiveRadius = Settings.ExplosiveRange;
-                DebugWindow.LogMsg("Not in a logbook, setting values to the ones in settings");
-            }
-            //logbook distance = 970 + 25% = 1213? MapExpeditionMaximumPlacementDistancePct
-            //range = 305 + 35% = 409? MapExpeditionExplosionRadiusPct 
-
 
             float maxRange = (explosiveDistance + explosiveRadius) * placements;
             float distance = 0;
