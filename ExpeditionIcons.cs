@@ -91,28 +91,9 @@ namespace ExpeditionIcons
 
             var logmods = GameController.Game.IngameState.Data.MapStats;
 
-            Dictionary<string, int> searchable = logmods.ToDictionary(item => item.Key.ToString(), item => item.Value); //I dont know how to convert GameStat to string, so this will do I guess
+            explosiveDistance = baseExplosiveDistance * (100 + logmods?.GetValueOrDefault(GameStat.MapExpeditionMaximumPlacementDistancePct) ?? 0) / 100;
 
-            if (searchable.ContainsKey("MapExpeditionMaximumPlacementDistancePct"))
-            {
-                explosiveDistance = searchable["MapExpeditionMaximumPlacementDistancePct"] * baseExplosiveDistance / 100 + baseExplosiveDistance;
-                DebugWindow.LogMsg($"Found distance mod, setting distance to {explosiveDistance}");
-            }
-            else
-            {
-                explosiveDistance = baseExplosiveDistance;
-            }
-            if (searchable.ContainsKey("MapExpeditionExplosionRadiusPct"))
-            {
-                explosiveRadius = searchable["MapExpeditionExplosionRadiusPct"] * baseExplosiveRadius / 100 + baseExplosiveRadius;
-                DebugWindow.LogMsg($"Found radius mod, setting radius to {explosiveRadius}");
-            }
-            else
-            {
-                explosiveRadius = baseExplosiveRadius;
-            }
-            //logbook distance = 970 + 25% = 1213? MapExpeditionMaximumPlacementDistancePct
-            //range = 305 + 35% = 409? MapExpeditionExplosionRadiusPct 
+            explosiveRadius = baseExplosiveRadius * (100 + logmods?.GetValueOrDefault(GameStat.MapExpeditionExplosionRadiusPct) ?? 0) / 100;
         }
         public override void DrawSettings()
         {
@@ -215,8 +196,8 @@ namespace ExpeditionIcons
                     if (e.Path.Contains("ExpeditionMarker"))
                     {
                         var positionedComp = e.GetComponent<Positioned>();
-                        //var animatedMetaData = e.GetComponent<Animated>().BaseAnimatedObjectEntity.Metadata;
-                        var animatedMetaData = e.GetComponent<Animated>().ReadObjectAt<Entity>(0x1E8).Metadata;
+                        var animatedMetaData = e.GetComponent<Animated>()?.BaseAnimatedObjectEntity?.Metadata;
+                        //var animatedMetaData = e.GetComponent<Animated>().ReadObjectAt<Entity>(0x1E8).Metadata;
                         if (animatedMetaData == null) continue;
 
                         var text = "*";
@@ -934,7 +915,7 @@ namespace ExpeditionIcons
             int placements = 0;
             for (int i = 0; i < 10; i++)
             {
-                ingameStateIngameUi.TryGetChildFromIndices(out var node, 103 + i, 7, 12, 2, 0, 0, 0); //the number of explosives from UI
+                var node = ingameStateIngameUi.GetChildFromIndices(103 + i, 7, 12, 2, 0, 0, 0); //the number of explosives from UI
                 if(node != null)
                 {
                     placements = Int32.Parse(node.Text);
