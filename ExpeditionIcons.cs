@@ -91,28 +91,9 @@ namespace ExpeditionIcons
 
             var logmods = GameController.Game.IngameState.Data.MapStats;
 
-            Dictionary<string, int> searchable = logmods.ToDictionary(item => item.Key.ToString(), item => item.Value); //I dont know how to convert GameStat to string, so this will do I guess
+            explosiveDistance = baseExplosiveDistance * (100 + logmods?.GetValueOrDefault(GameStat.MapExpeditionMaximumPlacementDistancePct) ?? 0) / 100;
 
-            if (searchable.ContainsKey("MapExpeditionMaximumPlacementDistancePct"))
-            {
-                explosiveDistance = searchable["MapExpeditionMaximumPlacementDistancePct"] * baseExplosiveDistance / 100 + baseExplosiveDistance;
-                DebugWindow.LogMsg($"Found distance mod, setting distance to {explosiveDistance}");
-            }
-            else
-            {
-                explosiveDistance = baseExplosiveDistance;
-            }
-            if (searchable.ContainsKey("MapExpeditionExplosionRadiusPct"))
-            {
-                explosiveRadius = searchable["MapExpeditionExplosionRadiusPct"] * baseExplosiveRadius / 100 + baseExplosiveRadius;
-                DebugWindow.LogMsg($"Found radius mod, setting radius to {explosiveRadius}");
-            }
-            else
-            {
-                explosiveRadius = baseExplosiveRadius;
-            }
-            //logbook distance = 970 + 25% = 1213? MapExpeditionMaximumPlacementDistancePct
-            //range = 305 + 35% = 409? MapExpeditionExplosionRadiusPct 
+            explosiveRadius = baseExplosiveRadius * (100 + logmods?.GetValueOrDefault(GameStat.MapExpeditionExplosionRadiusPct) ?? 0) / 100;
         }
         public override void DrawSettings()
         {
@@ -159,24 +140,22 @@ namespace ExpeditionIcons
             {
                 if (efficientLines.Count != 0)
                 {
-                    //foreach (var point in efficientPoints)
-                    //{
-                    //    DrawEllipseToWorld(point, Settings.ExplosiveRange, 50, 4, Settings.OptimalColor);
-                    //}
-                    Graphics.DrawLine(camera.WorldToScreen(detonator.Pos), camera.WorldToScreen(efficientLines[0].Pos), 3, Settings.OptimalColor);
-                    if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
-                        DrawToLargeMiniMapLine(detonator, efficientLines[0]);
-                    Entity prev = efficientLines[0];
-                    foreach (Entity point in efficientLines)
-                    {
-                        if (point != efficientLines.First())
+                    try{
+                        Graphics.DrawLine(camera.WorldToScreen(detonator.Pos), camera.WorldToScreen(efficientLines[0].Pos), 3, Settings.OptimalColor);
+                        if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
+                            DrawToLargeMiniMapLine(detonator, efficientLines[0]);
+                        Entity prev = efficientLines[0];
+                        foreach (Entity point in efficientLines)
                         {
-                            Graphics.DrawLine(camera.WorldToScreen(prev.Pos), camera.WorldToScreen(point.Pos), 3, Settings.OptimalColor);
-                            if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
-                                DrawToLargeMiniMapLine(prev, point);
-                            prev = point;
+                            if (point != efficientLines.First())
+                            {
+                                Graphics.DrawLine(camera.WorldToScreen(prev.Pos), camera.WorldToScreen(point.Pos), 3, Settings.OptimalColor);
+                                if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
+                                    DrawToLargeMiniMapLine(prev, point);
+                                prev = point;
+                            }
                         }
-                    }
+                    }catch{}
                 }
 
                 //GetComponent
