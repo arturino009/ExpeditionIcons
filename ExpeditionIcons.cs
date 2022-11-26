@@ -144,20 +144,22 @@ namespace ExpeditionIcons
                     //{
                     //    DrawEllipseToWorld(point, Settings.ExplosiveRange, 50, 4, Settings.OptimalColor);
                     //}
-                    Graphics.DrawLine(camera.WorldToScreen(detonator.Pos), camera.WorldToScreen(efficientLines[0].Pos), 3, Settings.OptimalColor);
-                    if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
-                        DrawToLargeMiniMapLine(detonator, efficientLines[0]);
-                    Entity prev = efficientLines[0];
-                    foreach (Entity point in efficientLines)
-                    {
-                        if (point != efficientLines.First())
+                    try{
+                        Graphics.DrawLine(camera.WorldToScreen(detonator.Pos), camera.WorldToScreen(efficientLines[0].Pos), 3, Settings.OptimalColor);
+                        if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
+                            DrawToLargeMiniMapLine(detonator, efficientLines[0]);
+                        Entity prev = efficientLines[0];
+                        foreach (Entity point in efficientLines)
                         {
-                            Graphics.DrawLine(camera.WorldToScreen(prev.Pos), camera.WorldToScreen(point.Pos), 3, Settings.OptimalColor);
-                            if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
-                                DrawToLargeMiniMapLine(prev, point);
-                            prev = point;
+                            if (point != efficientLines.First())
+                            {
+                                Graphics.DrawLine(camera.WorldToScreen(prev.Pos), camera.WorldToScreen(point.Pos), 3, Settings.OptimalColor);
+                                if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
+                                    DrawToLargeMiniMapLine(prev, point);
+                                prev = point;
+                            }
                         }
-                    }
+                    }catch{}
                 }
 
                 //GetComponent
