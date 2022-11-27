@@ -90,10 +90,12 @@ namespace ExpeditionIcons
             efficientLines.Clear();
 
             var logmods = GameController.Game.IngameState.Data.MapStats;
+            logmods.TryGetValue(GameStat.MapExpeditionMaximumPlacementDistancePct, out var expeditionPlacementDistance);
+            logmods.TryGetValue(GameStat.MapExpeditionExplosionRadiusPct, out var expeditionExplosionRadius);
 
-            explosiveDistance = baseExplosiveDistance * (100 + logmods?.GetValueOrDefault(GameStat.MapExpeditionMaximumPlacementDistancePct) ?? 0) / 100;
+            explosiveDistance = baseExplosiveDistance * (100 + expeditionPlacementDistance) / 100;
 
-            explosiveRadius = baseExplosiveRadius * (100 + logmods?.GetValueOrDefault(GameStat.MapExpeditionExplosionRadiusPct) ?? 0) / 100;
+            explosiveRadius = baseExplosiveRadius * (100 + expeditionExplosionRadius) / 100;
         }
         public override void DrawSettings()
         {
