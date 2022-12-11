@@ -913,7 +913,7 @@ namespace ExpeditionIcons
         public void getBestLine(List<Entity> nodes) //Using nearest neighbour. Pretty bad, but is very fast
         {
             int placements = 0;
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 20; i++)
             {
                 ingameStateIngameUi.TryGetChildFromIndices(out var node, 103 + i, 7, 12, 2, 0, 0, 0); //the number of explosives from UI
                 if(node != null)
