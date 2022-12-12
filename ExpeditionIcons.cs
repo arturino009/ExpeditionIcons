@@ -31,6 +31,8 @@ namespace ExpeditionIcons
         List<Entity> remnants = new List<Entity>();
         List<Entity> artifacts = new List<Entity>();
         List<Entity> efficientLines = new List<Entity>();
+        List<Entity> logbookRemnants = new List<Entity>();
+        List<Entity> doubleRemnants = new List<Entity>();
         Entity detonator = new Entity();
         bool usedDetonator = false;
         const float baseExplosiveDistance = 970;
@@ -121,16 +123,10 @@ namespace ExpeditionIcons
                 if (e.Path.Contains("ExpeditionDetonator"))
                 {
                     detonator = e;
-                    try{
-                        if (!e.IsTargetable)
-                        {
-                            usedDetonator = true;
-                        }
-                        else
-                        {
-                            usedDetonator = false;
-                        }
-                    }catch{}
+                    if (!e.IsTargetable && e.DistancePlayer<100)
+                    {
+                        usedDetonator = true;
+                    }
                     continue;
                 }
                 if (e.Path.Contains("ExpeditionExplosive") && !e.Path.Contains("Fuse"))
@@ -459,6 +455,10 @@ namespace ExpeditionIcons
                         {
                             remnants.Add(e);
                         }
+                        if (!logbookRemnants.Contains(e))
+                        {
+                            logbookRemnants.Add(e);
+                        }
                     }
                     if ((mods.Any(x => x.Contains("ExpeditionRelicModifierItemRarityMonster"))) && Settings.ShowRarity.Value)
                     {
@@ -777,6 +777,10 @@ namespace ExpeditionIcons
                         {
                             artifacts.Add(e);
                         }
+                        if (!doubleRemnants.Contains(e))
+                        {
+                            doubleRemnants.Add(e);
+                        }
                     }
 
                     if ((mods.Any(x => x.Contains("ExpeditionRelicModifierImmunePhysicalDamage")) && Settings.PhysImmune.Value) ||
@@ -939,6 +943,33 @@ namespace ExpeditionIcons
             float maxRange = (explosiveDistance + explosiveRadius) * placements;
             float distance = 0;
             Entity prev = detonator;
+            
+            //Add priority to runic doubling remnants
+            while (doubleRemnants.Count != 0)
+            {
+                var closestPoint = doubleRemnants.Where(point => point != prev).OrderBy(point => Vector3.Distance(prev.Pos, point.Pos)).First();
+                if (Vector3.Distance(prev.Pos, closestPoint.Pos) + distance < maxRange)
+                {
+                    distance += Vector3.Distance(prev.Pos, closestPoint.Pos);
+                    prev = closestPoint;
+                    efficientLines.Add(closestPoint);
+                    doubleRemnants.Remove(closestPoint);
+                }
+                else break;
+            }
+            //Add priority to logbook remnants
+            while (logbookRemnants.Count != 0)
+            {
+                var closestPoint = logbookRemnants.Where(point => point != prev).OrderBy(point => Vector3.Distance(prev.Pos, point.Pos)).First();
+                if (Vector3.Distance(prev.Pos, closestPoint.Pos) + distance < maxRange)
+                {
+                    distance += Vector3.Distance(prev.Pos, closestPoint.Pos);
+                    prev = closestPoint;
+                    efficientLines.Add(closestPoint);
+                    logbookRemnants.Remove(closestPoint);
+                }
+                else break;
+            }
             while (nodes.Count != 0)
             {
                 var closestPoint = nodes.Where(point => point != prev).OrderBy(point => Vector3.Distance(prev.Pos, point.Pos)).First();
