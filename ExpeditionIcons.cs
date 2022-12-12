@@ -96,6 +96,8 @@ namespace ExpeditionIcons
             explosiveDistance = baseExplosiveDistance * (100 + logmods?.GetValueOrDefault(GameStat.MapExpeditionMaximumPlacementDistancePct) ?? 0) / 100;
 
             explosiveRadius = baseExplosiveRadius * (100 + logmods?.GetValueOrDefault(GameStat.MapExpeditionExplosionRadiusPct) ?? 0) / 100;
+            
+            usedDetonator = false;
         }
         public override void DrawSettings()
         {
