@@ -115,20 +115,22 @@ namespace ExpeditionIcons
             remnants.Clear();
             artifacts.Clear();
             explosives.Clear();
-            foreach (var e in GameController.EntityListWrapper.OnlyValidEntities)
+            foreach (var e in GameController.EntityListWrapper.Entities)
             {
                 if (e.Path == null) continue;
                 if (e.Path.Contains("ExpeditionDetonator"))
                 {
                     detonator = e;
-                    if (!e.GetComponent<Targetable>().isTargetable)
-                    {
-                        usedDetonator = true;
-                    }
-                    else
-                    {
-                        usedDetonator = false;
-                    }
+                    try{
+                        if (!e.IsTargetable)
+                        {
+                            usedDetonator = true;
+                        }
+                        else
+                        {
+                            usedDetonator = false;
+                        }
+                    }catch{}
                     continue;
                 }
                 if (e.Path.Contains("ExpeditionExplosive") && !e.Path.Contains("Fuse"))
@@ -167,7 +169,7 @@ namespace ExpeditionIcons
                 //foreach (var e in GameController.EntityListWrapper.NotOnlyValidEntities)
                 {
                     if (e.Path == null) continue;
-                    // var renderComponent = e?.GetComponent<Render>();
+                    // var renderComponent = e?.Pos;
                     // if (renderComponent == null) continue;
 
                     if (e.Path.Contains("Terrain/Leagues/Expedition/Tiles"))
@@ -189,7 +191,7 @@ namespace ExpeditionIcons
                             FontBackgroundColor = Color.Orange,
                             TextWrapLength = 35
                         };
-                        var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
+                        var ent = new StoredEntity(e.Pos.Z, positionedComp.GridPos, e.Id, TextInfo);
                         if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
                             DrawToLargeMiniMapText(ent, ent.TextureInfo);
                         continue;
@@ -234,7 +236,7 @@ namespace ExpeditionIcons
                                 DrawEllipseToWorld(location, 12, 15, 8, Color.Red);
                             }
 
-                            var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
+                            var ent = new StoredEntity(e.Pos.Z, positionedComp.GridPos, e.Id, TextInfo);
                             if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible && showElement)
                             {
                                 DrawToLargeMiniMapText(ent, ent.TextureInfo);
@@ -281,7 +283,7 @@ namespace ExpeditionIcons
                         // FontBackgroundColor = Color.Transparent,
                         // TextWrapLength = 50
                         // };
-                        // var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
+                        // var ent = new StoredEntity(e.Pos.Z, positionedComp.GridPos, e.Id, TextInfo);
                         // if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible)
                         // DrawToLargeMiniMapText(ent, ent.TextureInfo);
                         // }
@@ -317,7 +319,7 @@ namespace ExpeditionIcons
                                 {
                                     DrawEllipseToWorld(location, 12, 15, 8, Color.Red);
                                 }
-                                var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
+                                var ent = new StoredEntity(e.Pos.Z, positionedComp.GridPos, e.Id, TextInfo);
                                 if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible && showElement)
                                     DrawToLargeMiniMapText(ent, ent.TextureInfo);
                             }
@@ -351,7 +353,7 @@ namespace ExpeditionIcons
                                 {
                                     DrawEllipseToWorld(location, 12, 15, 8, Color.Red);
                                 }
-                                var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
+                                var ent = new StoredEntity(e.Pos.Z, positionedComp.GridPos, e.Id, TextInfo);
                                 if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible && showElement)
                                     DrawToLargeMiniMapText(ent, ent.TextureInfo);
                             }
@@ -384,7 +386,7 @@ namespace ExpeditionIcons
                                 {
                                     DrawEllipseToWorld(location, 12, 15, 8, Color.Red);
                                 }
-                                var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
+                                var ent = new StoredEntity(e.Pos.Z, positionedComp.GridPos, e.Id, TextInfo);
                                 if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible && showElement)
                                     DrawToLargeMiniMapText(ent, ent.TextureInfo);
                             }
@@ -418,7 +420,7 @@ namespace ExpeditionIcons
                                 {
                                     DrawEllipseToWorld(location, 12, 15, 8, Color.Red);
                                 }
-                                var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
+                                var ent = new StoredEntity(e.Pos.Z, positionedComp.GridPos, e.Id, TextInfo);
                                 if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible && showElement)
                                     DrawToLargeMiniMapText(ent, ent.TextureInfo);
                             }
@@ -429,7 +431,7 @@ namespace ExpeditionIcons
                 foreach (var e in GameController.EntityListWrapper.ValidEntitiesByType[EntityType.IngameIcon])
                 //foreach (var e in GameController.EntityListWrapper.NotOnlyValidEntities)
                 {
-                    var renderComponent = e?.GetComponent<Render>();
+                    var renderComponent = e?.Pos;
                     if (renderComponent == null) continue;
                     var expeditionChestComponent = e?.GetComponent<ObjectMagicProperties>();
                     if (expeditionChestComponent == null) continue;
@@ -828,7 +830,7 @@ namespace ExpeditionIcons
                             break;
                         }
                     }
-                    var ent = new StoredEntity(e.GetComponent<Render>().Z, positionedComp.GridPos, e.Id, TextInfo);
+                    var ent = new StoredEntity(e.Pos.Z, positionedComp.GridPos, e.Id, TextInfo);
                     if (GameController.Game.IngameState.IngameUi.Map.LargeMap.IsVisible && showElement)
                         DrawToLargeMiniMapText(ent, ent.TextureInfo);
                 }
@@ -845,7 +847,7 @@ namespace ExpeditionIcons
             }
             var mapRect = mapWindow.GetClientRect();
             var playerPos = GameController.Player.GetComponent<Positioned>().GridPos;
-            var posZ = GameController.Player.GetComponent<Render>().Z;
+            var posZ = GameController.Player.Pos.Z;
             var screenCenter = new Vector2(mapRect.Width / 2, mapRect.Height / 2).Translate(0, -20) + new Vector2(mapRect.X, mapRect.Y) + new Vector2(mapWindow.LargeMapShiftX, mapWindow.LargeMapShiftY);
             var diag = (float)Math.Sqrt(camera.Width * camera.Width + camera.Height * camera.Height);
             var k = camera.Width < 1024f ? 1120f : 1024f;
@@ -872,13 +874,13 @@ namespace ExpeditionIcons
             }
             var mapRect = mapWindow.GetClientRect();
             var playerPos = GameController.Player.GetComponent<Positioned>().GridPos;
-            var posZ = GameController.Player.GetComponent<Render>().Z;
+            var posZ = GameController.Player.Pos.Z;
             var screenCenter = new Vector2(mapRect.Width / 2, mapRect.Height / 2).Translate(0, -20) + new Vector2(mapRect.X, mapRect.Y) + new Vector2(mapWindow.LargeMapShiftX, mapWindow.LargeMapShiftY);
             var diag = (float)Math.Sqrt(camera.Width * camera.Width + camera.Height * camera.Height);
             var k = camera.Width < 1024f ? 1120f : 1024f;
             var scale = k / camera.Height * camera.Width * 3f / 4f / mapWindow.LargeMapZoom;
-            var firstZ = prev.GetComponent<Render>().Z;
-            var secondZ = point.GetComponent<Render>().Z;
+            var firstZ = prev.Pos.Z;
+            var secondZ = point.Pos.Z;
             var first = screenCenter + MapIcon.DeltaInWorldToMinimapDelta(prev.GridPos - playerPos, diag, scale, (firstZ - posZ) / (9f / mapWindow.LargeMapZoom));
             var second = screenCenter + MapIcon.DeltaInWorldToMinimapDelta(point.GridPos - playerPos, diag, scale, (secondZ - posZ) / (9f / mapWindow.LargeMapZoom));
             Graphics.DrawLine(first, second, 2, Settings.OptimalColor);
